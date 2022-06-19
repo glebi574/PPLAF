@@ -2,13 +2,11 @@
 	math = {
 	
 		abs = function(a) --abs
-			if a < 0 then a = -a end
-			return a
+			return (a < 0 and -a) or a
 		end,
 		
 		floor = function(a) --floor
-			if a // 1 == (a - 0.5) // 1 then a = a + 1 end
-			return a // 1
+			return ((a // 1 == (a - 0.5) // 1 and a + 1) or a) // 1
 		end,
 		
 		random = function(a, b) --random from a to b

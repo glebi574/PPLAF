@@ -20,12 +20,7 @@ require("/dynamic/pplaf/functions.lua")
 		create = function(x, y, type, method)
 			type = type or player.types.player
 			method = method or player.methods.main
-			local id
-			if method == player.methods.main then
-				id = pewpew.new_player_ship(x, y, 0)
-			else
-				id = pewpew.new_customizable_entity(x, y)
-			end
+			local id = (method == player.methods.main and pewpew.new_player_ship(x, y, 0)) or pewpew.new_customizable_entity(x, y)
 			table.insert(player_ships, {	
 											id = id,
 										  type = type,

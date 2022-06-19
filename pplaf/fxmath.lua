@@ -22,7 +22,6 @@
 				local dy = args[4] - args[2]
 				l = fmath.sqrt(dx * dx + dy * dy)
 			end
-			assert(l ~= nil, "fxmath.lenght - wrong imput")
 			return l
 		end
 		

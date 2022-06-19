@@ -36,7 +36,7 @@ require("/dynamic/pplaf/player.lua")
 		end,
 		
 		find = function(id)
-			if pewpew.entity_get_is_alive(id) and not pewpew.entity_get_is_started_to_be_destroyed(id) then
+			if is_alive(id) then
 				for i, t in ipairs(triggers) do
 					if t.id == id then return i end
 				end

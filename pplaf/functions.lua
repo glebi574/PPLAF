@@ -13,3 +13,7 @@ require("/dynamic/pplaf/fxmath.lua")
 		return id
 	end
 	
+	function is_alive(id)
+		return pewpew.entity_get_is_alive(id) and not pewpew.entity_get_is_started_to_be_destroyed(id)
+	end
+	

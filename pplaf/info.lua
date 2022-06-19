@@ -64,6 +64,7 @@
 				functions:
 					chance(c) -> r / return true or false with chance `c`
 					create_text_line(x, y, string) -> id
+					is_alive(id) -> r / checks if entity is alive and not being destroyed
 				
 				math.
 					abs(a) -> b
@@ -92,7 +93,7 @@
 					remove(index)
 				
 				player. / used to create player ships and control camera
-					create(x, y, type, method) -> id / creates player with type and method, defined in player.lua
+					create(x, y[, type, method]) -> id / creates player with type and method, defined in player.lua. Type or/and method can be nil
 					types.
 						player
 						ai / not controlled by player
