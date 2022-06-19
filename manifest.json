@@ -1,0 +1,6 @@
+{
+  "name":"Functions 0.5",
+  "descriptions":["~desription~"],
+  "entry_point":"level.lua",
+  "has_score_leaderboard":false
+}
