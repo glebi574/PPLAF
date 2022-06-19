@@ -4,8 +4,7 @@ require("/dynamic/pplaf/math.lua")
 require("/dynamic/pplaf/fxmath.lua")
 	
 	function chance(c)
-		if math.random(1, 100) < c then return true end
-		return false
+		return math.random(1, 100) < c 
 	end
 	
 	function create_text_line(x, y, text)
