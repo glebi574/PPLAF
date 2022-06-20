@@ -7,45 +7,47 @@ require("/dynamic/pplaf/player.lua")
 	
 	trigger = {
 		
-		create = function(...)
-			local args = {...}
-			local id, sx, sy
+		G = 0,
+		
+		create = function(mesh, args)
+			local id, sx, sy, s
+			trigger.G = trigger.G + 1
 			if #args == 4 then --x1, y1, x2, y2
 				sx = (args[3] - args[1]) / 2fx
 				sy = (args[4] - args[2]) / 2fx
-				id = pewpew.new_customizable_entity(sx + args[1], sy + args[2])
-				table.insert(triggers, {
-											 id = id,
-											  v = args
-									   })
-				pewpew.customizable_entity_set_mesh(id, "/dynamic/pplaf/triggers/meshes/rectangle.lua", 0)
-			elseif #args == 3 then --x0, y0, r
+				if mesh then
+					id = pewpew.new_customizable_entity(sx + args[1], sy + args[2]) end
+				s = "rectangle"
+			elseif #args == 3 then --x, y, r
 				sx, sy = args[3], args[3]
-				id = pewpew.new_customizable_entity(args[1], args[2])
-				table.insert(triggers, {
-										     id = id,
-											  v = args
-									   })
-				pewpew.customizable_entity_set_mesh(id, "/dynamic/pplaf/triggers/meshes/circle.lua", 0)
+				if mesh then
+					id = pewpew.new_customizable_entity(args[1], args[2]) end
+				s = "circle"
 			else
 				error("trigger.create - wrong imput")
 			end
-			pewpew.customizable_entity_start_spawning(id, 0)
-			pewpew.customizable_entity_set_mesh_xyz_scale(id, sx / 100fx, sy / 100fx, 1fx)
-			return id
+			table.insert(triggers, {
+										    id = id,
+											 i = trigger.G,
+											 v = args
+									   })
+			if mesh then
+				pewpew.customizable_entity_set_mesh(id, "/dynamic/pplaf/triggers/mesh."..s..".lua", 0)
+				pewpew.customizable_entity_start_spawning(id, 0)
+				pewpew.customizable_entity_set_mesh_xyz_scale(id, sx / 100fx, sy / 100fx, 1fx)
+			end
+			return trigger.G
 		end,
 		
-		find = function(id)
-			if is_alive(id) then
-				for i, t in ipairs(triggers) do
-					if t.id == id then return i end
-				end
+		find = function(index)
+			for i, t in ipairs(triggers) do
+				if t.i == index then return i end
 			end
 			return false
 		end,
 		
-		get = function(id)
-			local i = trigger.find(id)
+		get = function(index)
+			local i = trigger.find(index)
 			local k = false
 			if i then
 				for _, p in ipairs(player_ships) do
@@ -61,11 +63,12 @@ require("/dynamic/pplaf/player.lua")
 			return k
 		end,
 		
-		remove = function(id)
-			local i = trigger.find(id)
+		remove = function(index)
+			local i = trigger.find(index)
 			if i then
+				if triggers[i].id then
+					pewpew.customizable_entity_start_exploding(triggers[i].id, 40) end
 				table.remove(triggers, i)
-				pewpew.customizable_entity_start_exploding(id, 40)
 			end
 		end
 		

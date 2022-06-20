@@ -24,7 +24,8 @@
 				get_player_inputs(index) -> move_angle, move_distance, shhot_angle, shoot_distance
 				configure_player_hud(index, {top_left_line})
 				configure_player(index,
-					{has_lost, shield, camera_x_override, camera_y_override, camera_distance, camera_rotation_x_axis, move_joystick_color, shoot_joystick_color})
+					{has_lost, shield, camera_x_override, camera_y_override, camera_distance,
+					camera_rotation_x_axis, move_joystick_color, shoot_joystick_color})
 				get_player_configuration(index) -> has_lost, shield
 				add_damage_to_player_ship(id, x)
 				add_arrow_to_player_ship(ship_id, target_id, color) -> id
@@ -33,7 +34,7 @@
 				get_entity_count(type) -> r
 				get_entity_type(id) -> type
 				play_ambient_sound(path, index)
-				paly_sound(path, index, x, y)
+				play_sound(path, index, x, y)
 				create_explosion(x, y, color, scale, particles_amount)
 				new_player_ship(x, y, index) -> id
 				new_player_bullet(x, y, angle, index) -> id
@@ -46,21 +47,38 @@
 				entity_destroy(id)
 				customizable_entity_set_position_interpolation(id, bool)
 				customizable_entity_set_mesh(id, path, index)
+				customizable_entity_set_mesh_xyz(id, x, y, z) / changes mesh's offset
+				customizable_entity_set_mesh_z(id, z)
+				customizable_entity_skip_mesh_attributes_interpolation(entity_id)
 				customizable_entity_set_flipping_meshes(id, path, index1, index2)
 				customizable_entity_set_mesh_color(id, color)
 				customizable_entity_set_string(id, text) / changes entitie's mesh to text
-				customizable_entity_set_mesh_z(id, x)
 				customizable_entity_set_mesh_scale(id, scale)
 				customizable_entity_set_mesh_xyz_scale(id, xs, ys, zs)
 				customizable_entity_set_mesh_angle(id, angle, xv, yv, zv)
 				customizable_entity_add_rotation_to_mesh(id, angle, xv, yv, zv)
 				customizable_entity_configure_music_response(id, {color1, color2, xs1, xs2, ys1, ys2, zs1, zs2})
 				customizable_entity_set_visibility_radius(id, x) / changes the radius where entity is drawn
-				customizable_entity_configure_wall_collision(entity_id, collide_with_walls, collision_callback) / calls collision_callback when entity collides with walls
+				customizable_entity_configure_wall_collision(entity_id, collide_with_walls, collision_callback)
+				customizable_entity_set_player_collision_callback(id, collision_callback)
+				customizable_entity_set_player_weapon_collision_callback(id, collision_callback)
 				customizable_entity_start_spawning(id, time)
 				customizable_entity_start_exploding(id, time)
 				
 			PewPew Live Additional Framework:
+				
+				stop_game() / stops game, `level_tick` won't be called anymore
+				
+				global_variables:
+					PI
+					FX_PI
+					L_WIDTH
+					L_HEIGHT / level's width and height
+					GAME_STATE
+					TIME / current tick from beginning of the game
+					START_POS_X
+					START_POS_Y / player's starting position
+				
 				functions:
 					chance(c) -> r / return true or false with chance `c`
 					create_text_line(x, y, string) -> id
@@ -77,24 +95,26 @@
 					random(a, b) -> r
 					lenght(v1, v2[, v3, v4]) -> l / returns lenght of vector, where input is: dx, dy / x1, y1, x2, y2
 				
-				timer. / used to create timers containing 2 values. When the first value is equal to maximum, it is reset to zero and second value is increased
-					create(max) -> index / creates timer and returns its index
-					get(index) -> v1, v2 / return current values of timer's variables
-					remove(index)
-				
 				trigger. / used to create triggers, which can be activated by player ships
-					create(v1, v2, v3[, v4]) -> id / creates trigger with shape of circle(x, y, radius) or rectangle(x1, y1, x2, y2) and returns its id
-					get(id) -> r / checks if player is in trigger's area
+					create(mesh, {v1, v2, v3[, v4]}) -> index
+						/ creates trigger with shape of circle(x, y, radius) or rectangle(x1, y1, x2, y2)
+						/ if `mesh` is true, trigger will be visible
+					get(id) -> r
+						/ checks if player is in trigger's area
 					remove(id)
 				
-				switch. / used to create switches
-					create({a1, a2, a3[, a4]}, {b1, b2, b3[, b4]}) creates 2 triggers, switched by each other, imput is similar to trigger.create() and return switch's index
-					get(index) -> mode, state / returns current switch's mode(which of triggers is active) and state
+				switch. / used to create switches, which automatically create and delete triggers in 2 positions
+					create({a1, a2, a3[, a4]}, {b1, b2, b3[, b4]}) -> index
+						/ creates switch, imput is similar to trigger.create()
+					get(index) -> mode, state
+						/ returns current switch's mode(which of triggers is active)
+						/ and state(if `true`, triggeres will be switched on next tick)
 					remove(index)
 				
 				player. / used to create player ships and control camera
-					create(x, y[, type, method]) -> id / creates player with type and method, defined in player.lua. Type or/and method can be nil
-					types.
+					create(x, y[, type, method]) -> id
+						/ creates player with type and method, defined in player.lua. Type or/and method can be nil
+					type.
 						player
 						ai / not controlled by player
 					methods.

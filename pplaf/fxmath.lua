@@ -14,8 +14,7 @@
 		end,
 		
 		lenght = function(...) --fx lenght of vector
-			local args = {...}
-			local l
+			local args, l = {...}
 			if #args == 2 then l = fmath.sqrt(args[1] * args[1] + args[2] * args[2]) end
 			if #args == 4 then --x1, y1, x2, y2
 				local dx = args[3] - args[1]

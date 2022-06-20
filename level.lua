@@ -8,12 +8,11 @@ end
 	
 	pewpew.set_level_size(L_WIDTH, L_HEIGHT)
 	player.create(START_POS_X, START_POS_Y)
-	--pewpew.configure_player(0, {camera_distance = -300fx})
 	
 	local t0 = create_text_line(500fx, 550fx, "Try to use joysticks")
 	
 	pewpew.configure_player_hud(0,
-						{top_left_line = "Current version: 0.5 Changes: optimisations and fixes"})
+						{top_left_line = "Current version: 0.6 Changes: "})
 	
 	local s1 = switch.create({400fx, 600fx, 450fx, 650fx},{550fx, 600fx, 600fx, 650fx})
 	local s2 = switch.create({400fx, 700fx, 450fx, 750fx},{550fx, 700fx, 600fx, 750fx})

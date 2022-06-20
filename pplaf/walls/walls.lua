@@ -26,10 +26,10 @@ require("/dynamic/pplaf/functions.lua")
 		end,
 		
 		remove = function(id)
-			local b = wall.find(id)
-			if b then
-				pewpew.remove_wall(walls[b].w_id)
-				table.remove(walls, b)
+			local i = wall.find(id)
+			if i then
+				pewpew.remove_wall(walls[i].w_id)
+				table.remove(walls, i)
 				pewpew.customizable_entity_start_exploding(id, 40)
 			end
 		end

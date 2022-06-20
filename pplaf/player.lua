@@ -7,7 +7,7 @@ require("/dynamic/pplaf/functions.lua")
 	
 	player = {
 		
-		types = {
+		type = {
 			player = 1,
 			    ai = 2
 		},
@@ -18,7 +18,7 @@ require("/dynamic/pplaf/functions.lua")
 		},
 		
 		create = function(x, y, type, method)
-			type = type or player.types.player
+			type = type or player.type.player
 			method = method or player.methods.main
 			local id = (method == player.methods.main and pewpew.new_player_ship(x, y, 0)) or pewpew.new_customizable_entity(x, y)
 			table.insert(player_ships, {	
@@ -29,12 +29,16 @@ require("/dynamic/pplaf/functions.lua")
 			return id
 		end,
 		
+		ai = function()
+			
+		end,
+		
 		camera = {
 			
 			properties = {
 							  x = START_POS_X,
 							  y = START_POS_Y,
-						  speed = 1fx,
+						  speed = 0.342fx,
 					   x_offset = 0fx,
 					   y_offset = 0fx,
 					   x_static = false,
@@ -49,8 +53,8 @@ require("/dynamic/pplaf/functions.lua")
 				for _, p in ipairs(player_ships) do
 					if 	(p.method == player.methods.main or
 						(player.properties.camera.do_count_custom and p.method == player.methods.custom))
-					and	(p.type == player.types.player or
-						(player.camera.properties.do_count_ai and p.type == player.types.ai))
+					and	(p.type == player.type.player or
+						(player.camera.properties.do_count_ai and p.type == player.type.ai))
 					then
 						local px, py = pewpew.entity_get_position(p.id)
 						mx = mx + px
@@ -68,10 +72,10 @@ require("/dynamic/pplaf/functions.lua")
 				
 				player.camera.properties.x = player.camera.properties.x +
 				((player.camera.properties.x_static or mx / n + player.camera.properties.x_offset + cdx)
-				- player.camera.properties.x) * player.camera.properties.speed / 12fx
+				- player.camera.properties.x) * player.camera.properties.speed
 				player.camera.properties.y = player.camera.properties.y +
 				((player.camera.properties.y_static or my / n + player.camera.properties.y_offset + cdy)
-				- player.camera.properties.y) * player.camera.properties.speed / 12fx
+				- player.camera.properties.y) * player.camera.properties.speed
 				
 				pewpew.configure_player(0, {camera_x_override = player.camera.properties.x,
 											camera_y_override = player.camera.properties.y})

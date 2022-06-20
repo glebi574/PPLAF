@@ -6,7 +6,7 @@
 		end,
 		
 		floor = function(a) --floor
-			return ((a // 1 == (a - 0.5) // 1 and a + 1) or a) // 1
+			return (a // 1 == (a - 0.5) // 1 and a + 1 or a) // 1
 		end,
 		
 		random = function(a, b) --random from a to b

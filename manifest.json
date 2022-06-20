@@ -1,5 +1,5 @@
 {
-  "name":"Functions 0.5",
+  "name":"Functions 0.6",
   "descriptions":["~desription~"],
   "entry_point":"level.lua",
   "has_score_leaderboard":false

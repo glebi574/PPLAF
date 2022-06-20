@@ -13,7 +13,7 @@ require("/dynamic/pplaf/triggers/triggers.lua")
 			switch.G = switch.G + 1
 			table.insert(switches, 	{
 										index = switch.G,
-										   id = trigger.create(b1[1], b1[2], b1[3], b1[4]),
+										   ti = trigger.create(true, {b1[1], b1[2], b1[3], b1[4]}),
 										   b1 = b1,
 										   b2 = b2,
 										 mode = false
@@ -31,14 +31,14 @@ require("/dynamic/pplaf/triggers/triggers.lua")
 		get = function(index)
 			local i = switch.find(index)
 			if i then
-				local s = trigger.get(switches[i].id)
+				local s = trigger.get(switches[i].ti)
 				if s then
 					switches[i].mode = not switches[i].mode
-					trigger.remove(switches[i].id)
-					switches[i].id = (switches[i].mode and trigger.create(	switches[i].b2[1], switches[i].b2[2],
-																			switches[i].b2[3], switches[i].b2[4]))
-														or trigger.create(	switches[i].b1[1], switches[i].b1[2],
-																			switches[i].b1[3], switches[i].b1[4])
+					trigger.remove(switches[i].ti)
+					switches[i].ti = (switches[i].mode and trigger.create(true, {switches[i].b2[1], switches[i].b2[2],
+																				switches[i].b2[3], switches[i].b2[4]}))
+														or trigger.create(true, {switches[i].b1[1], switches[i].b1[2],
+																				switches[i].b1[3], switches[i].b1[4]})
 				end
 				return s, switches[i].mode
 			end
@@ -47,7 +47,7 @@ require("/dynamic/pplaf/triggers/triggers.lua")
 		remove = function(index)
 			local i = switch.find(index)
 			if i then
-				trigger.remove(switches[i].id)
+				trigger.remove(switches[i].ti)
 				table.remove(switches, i)
 			end
 		end
