@@ -11,10 +11,8 @@ require("/dynamic/pplaf/walls/walls.lua")
 	
 	h = {
 		main = function()
-			 player.main()
-			trigger.update()
-			 switch.update()
-			  timer.update()
+			player.main()
+			 timer.update()
 		end
 	}
 	

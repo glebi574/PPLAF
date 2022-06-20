@@ -34,40 +34,23 @@ end
 			
 			t, m = switch.get(s1)
 			if t then
-				if m then
-					player.camera.properties.shooting_offset = false
-				else
-					player.camera.properties.shooting_offset = 50fx
-				end
+				player.camera.properties.shooting_offset = m and 50fx
 			end
 			
 			t, m = switch.get(s2)
 			if t then
-				if m then
-					player.camera.properties.x_static = false
-				else
-					player.camera.properties.x_static = 500fx
-				end
+				player.camera.properties.x_static = m and 500fx
 			end
 			
 			t, m = switch.get(s3)
 			if t then
-				if m then
-					player.camera.properties.y_static = false
-				else
-					player.camera.properties.y_static = 1000fx
-				end
+				player.camera.properties.y_static = m and 1000fx
 			end
 			
 			t, m = switch.get(s4)
 			if t then
-				if m then
-					player.camera.properties.x_static = false
-					player.camera.properties.y_static = false
-				else
-					player.camera.properties.x_static = 700fx
-					player.camera.properties.y_static = 1000fx
-				end
+				player.camera.properties.x_static = m and 700fx
+				player.camera.properties.y_static = m and 1000fx
 			end
 			
 		end

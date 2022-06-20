@@ -84,7 +84,7 @@
 				
 				trigger. / used to create triggers, which can be activated by player ships
 					create(v1, v2, v3[, v4]) -> id / creates trigger with shape of circle(x, y, radius) or rectangle(x1, y1, x2, y2) and returns its id
-					get_state(id) -> r / checks if player is in trigger's area
+					get(id) -> r / checks if player is in trigger's area
 					remove(id)
 				
 				switch. / used to create switches

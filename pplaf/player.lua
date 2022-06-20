@@ -58,8 +58,6 @@ require("/dynamic/pplaf/functions.lua")
 						n = n + 1fx
 					end
 				end
-				mx = mx / n
-				my = my / n
 				
 				if player.camera.properties.shooting_offset then
 					local _, _, ang, a = pewpew.get_player_inputs(0)
@@ -68,13 +66,12 @@ require("/dynamic/pplaf/functions.lua")
 					cdy = cdy * a * player.camera.properties.shooting_offset
 				end
 				
-				cdx = player.camera.properties.x_static or mx + player.camera.properties.x_offset + cdx
-				cdy = player.camera.properties.y_static or my + player.camera.properties.y_offset + cdy
-				
-				player.camera.properties.x = player.camera.properties.x + (cdx - player.camera.properties.x)
-											 * player.camera.properties.speed / 10fx 
-				player.camera.properties.y = player.camera.properties.y + (cdy - player.camera.properties.y)
-											 * player.camera.properties.speed / 10fx 
+				player.camera.properties.x = player.camera.properties.x +
+				((player.camera.properties.x_static or mx / n + player.camera.properties.x_offset + cdx)
+				- player.camera.properties.x) * player.camera.properties.speed / 12fx
+				player.camera.properties.y = player.camera.properties.y +
+				((player.camera.properties.y_static or my / n + player.camera.properties.y_offset + cdy)
+				- player.camera.properties.y) * player.camera.properties.speed / 12fx
 				
 				pewpew.configure_player(0, {camera_x_override = player.camera.properties.x,
 											camera_y_override = player.camera.properties.y})
