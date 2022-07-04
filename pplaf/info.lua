@@ -21,7 +21,7 @@
 				increase_score_of_player(index, x)
 				get_score_of_player(index)
 				stop_game()
-				get_player_inputs(index) -> move_angle, move_distance, shhot_angle, shoot_distance
+				get_player_inputs(index) -> moving_angle, moving_distance, shooting_angle, shooting_distance
 				configure_player_hud(index, {top_left_line})
 				configure_player(index,
 					{has_lost, shield, camera_x_override, camera_y_override, camera_distance,
@@ -31,6 +31,7 @@
 				add_arrow_to_player_ship(ship_id, target_id, color) -> id
 				remove_arrow_from_player_ship(ship_id, arrow_id)
 				make_player_ship_transparent(id, time)
+				set_player_ship_speed(id, m, v, duration) / sets player's speed to m * 10fx + v
 				get_entity_count(type) -> r
 				get_entity_type(id) -> type
 				play_ambient_sound(path, index)
@@ -67,8 +68,6 @@
 				
 			PewPew Live Additional Framework:
 				
-				stop_game() / stops game, `level_tick` won't be called anymore
-				
 				global_variables:
 					PI
 					FX_PI
@@ -83,6 +82,7 @@
 					chance(c) -> r / return true or false with chance `c`
 					create_text_line(x, y, string) -> id
 					is_alive(id) -> r / checks if entity is alive and not being destroyed
+					stop_game() / stops game, `level_tick` won't be called anymore
 				
 				math.
 					abs(a) -> b

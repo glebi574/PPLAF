@@ -1,6 +1,6 @@
 
 	math = {
-	
+		
 		abs = function(a) --abs
 			return (a < 0 and -a) or a
 		end,

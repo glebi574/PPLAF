@@ -1,4 +1,4 @@
-	
+
 	fxmath = {
 		
 		abs = function(a) --fx abs
