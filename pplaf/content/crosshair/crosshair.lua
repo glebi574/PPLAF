@@ -1,4 +1,4 @@
-
+--don't
 crosshair = {
 	
 	  id = pewpew.new_entity(START_POS_X, START_POS_Y),

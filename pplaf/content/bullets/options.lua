@@ -38,6 +38,11 @@ bullet.ai = {
 	player = function(id, info)
 		local x, y = pewpew.entity_get_position(id)
 		pewpew.entity_set_position(id, x + info.dx, y + info.dy)
+		info.time = info.time - 1
+		if info.time == 0 then
+			bullet.remove(id)
+			pewpew.entity_destroy(id)
+		end
 	end
 	
 }

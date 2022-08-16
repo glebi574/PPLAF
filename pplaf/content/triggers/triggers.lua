@@ -8,16 +8,12 @@ trigger = {
 		if #args == 4 then --x1, y1, x2, y2
 			x = (args[3] - args[1]) / 2fx
 			y = (args[4] - args[2]) / 2fx
-			if mesh then
-				id = pewpew.new_customizable_entity(x + args[1], y + args[2])
-				s = "rectangle"
-			end
+			id = pewpew.new_customizable_entity(x + args[1], y + args[2])
+			if mesh then s = "rectangle" end
 		elseif #args == 3 then --x, y, r
 			x, y = args[3], args[3]
-			if mesh then
-				id = pewpew.new_customizable_entity(args[1], args[2])
-				s = "circle"
-			end
+			id = pewpew.new_customizable_entity(args[1], args[2])
+			if mesh then s = "circle" end
 		else
 			error("pplaf.trigger.create - wrong imput")
 		end

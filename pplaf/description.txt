@@ -1,7 +1,86 @@
 
 PewPew Live version: 0.5.128
 Lua version: 5.3
-PPLAF version: 1.0
+PPLAF version: 0.7
 
 content:
+	global_variables.lua:
+		PI
+		FX_PI
+		BIG_NUMBER
+		BIG_FX
+		LEVEL_WIDTH
+		LEVEL_HEIGTH
+		NULL_FUNCTION - equal to `function() end`
+		GAME_STATE - if true, main tick will be called
+		TIME
+		SHIELD
+		START_POS_X
+		START_POS_Y
+	
+	math.
+		abs(var) -> int
+		floor(var) -> int
+		random(x1, x2) -> int - fmath.random_int(x1, x2)
+	
+	fxmath.
+		abs(var) -> fx - fmath.abs_fixedpoint(var)
+		floor(var) -> fx
+		random(x1, x2) -> fx - fmath.random_fixedpoint(x1, x2)
+		length(x1, y1[, x2, y2]) -> fx - returns length of vector with input: (dx, dy) or (x1, y1, x2, y2)
+	
+	camera. - requires entities in entities.player
+		options - table with options, use camera.configure() instead
+		mode - table, used by camera.configure
+		main() - function, used to update camera
+		configure(table) - updates camera's parametres
+	
+	entities.
+		meshes - path
+		main() - function, used to call ai of every entity
+		create(x, y, preset) -> id - creates entity from preset
+		remove(id) - removes entity from table, not destroys it
+		presets - table with presets
+		constructor - table with constructors
+		ai - table with ai's
+	
+	weapons. - used by entities.lua to add weapons
+		create(preset) -> array
+		main() - function, used to call ai of every weapon
+		presets - table with presets
+		constructor - table with constructors
+		ai - table with ai's
+	
+	bullet.
+		meshes - path
+		main() - function, used to call ai of every bullet
+		create(x, y, angle, preset) -> id - creates bullet from preset
+		remove()id - removes bullet from table, not destroys it
+		presets - table with presets
+		constructor - table with constructors
+		ai - table with ai's
+	
+	player. - used to create player's ships
+		move_ang
+		move_a
+		shoot_ang
+		shoot_a - player's inputs
+		create(x, y) -> id - creates player's ship
+		main() - used to get player inputs
+	
+	trigger.
+		create({x1, y1, a[, b]}, mesh) -> id - creates trigger; if there are 3 inputs, trigger has form of circle{x, y, radius}
+			if there are 4 inputs, it has form of rectangle{x1, y1, x2, y2}; if mesh is true, adds mesh
+		get(id) -> bool - checks if player activated trigger
+		remove(id)
+	
+	switch.
+		G - index
+		create(args1, args2) -> index - creates switch(and trigger) with mesh; input same as for trigger.create(doesn't require mesh variable)
+		remove(index)
+	
+	crosshair.
+		
+	wall.
+		
 	
