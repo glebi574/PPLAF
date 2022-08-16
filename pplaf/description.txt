@@ -4,6 +4,13 @@ Lua version: 5.3
 PPLAF version: 0.7
 
 content:
+	
+	chance(int) -> bool - returns true or false with some chance
+	new_string(x, y, string) -> id - creates entity and sets string
+	is_alive(id) -> bool - checks if entity is alive and not being destroyed
+	stop_game() - stops game
+	table.copy(table) -> table - copies table by value
+	
 	global_variables.lua:
 		PI
 		FX_PI
@@ -19,13 +26,13 @@ content:
 		START_POS_Y
 	
 	math.
-		abs(var) -> int
-		floor(var) -> int
+		abs(int) -> int
+		floor(int) -> int
 		random(x1, x2) -> int - fmath.random_int(x1, x2)
 	
 	fxmath.
-		abs(var) -> fx - fmath.abs_fixedpoint(var)
-		floor(var) -> fx
+		abs(fx) -> fx - fmath.abs_fixedpoint(var)
+		floor(fx) -> fx
 		random(x1, x2) -> fx - fmath.random_fixedpoint(x1, x2)
 		length(x1, y1[, x2, y2]) -> fx - returns length of vector with input: (dx, dy) or (x1, y1, x2, y2)
 	
