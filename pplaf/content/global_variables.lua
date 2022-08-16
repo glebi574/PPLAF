@@ -1,6 +1,8 @@
 
 PI = 3.141592654
+TAU = PI * 2
 FX_PI = fmath.tau() / 2fx
+FX_TAU = fmath.tau()
 BIG_NUMBER = fmath.to_int(fmath.max_fixedpoint())
 BIG_FX = fmath.max_fixedpoint()
 

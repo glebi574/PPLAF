@@ -60,20 +60,20 @@ entity.ai = {
 		local x, y = pewpew.entity_get_position(id)
 		if fxmath.length(x, y, info.to_x, info.to_y) < 10fx then
 			local tx, ty = pewpew.entity_get_position(2)
-			local ang, a = fxmath.random(0fx, fmath.tau()), fxmath.random(0fx, 500fx)
+			local ang, a = fxmath.random(0fx, FX_TAU), fxmath.random(0fx, 500fx)
 			local dy, dx = fmath.sincos(ang)
 			info.to_x = tx + dx * a
 			info.to_y = ty + dy * a
 			ang = fmath.atan2(info.to_y - y, info.to_x - x)
 			info.rotate = ang - info.ang
-			if info.rotate < 0fx then info.rotate = fmath.tau() + info.rotate end
+			if info.rotate < 0fx then info.rotate = FX_TAU + info.rotate end
 			info.dy, info.dx = fmath.sincos(ang)
 			info.dx, info.dy = info.dx * entity.presets._ai.speed, info.dy * entity.presets._ai.speed
 			info.ang_per_tick = info.rotate / 40fx
 		end
 		if info.rotate > 0fx then
 			info.ang = info.ang + info.ang_per_tick
-			if info.ang > fmath.tau() then info.ang = info.ang - fmath.tau() end
+			if info.ang > FX_TAU then info.ang = info.ang - FX_TAU end
 			info.rotate = info.rotate - info.ang_per_tick
 			pewpew.add_angle(id, info.ang_per_tick, 0fx, 0fx, 1fx)
 		else
