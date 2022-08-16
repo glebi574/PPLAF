@@ -13,7 +13,9 @@ content:
 	
 	global_variables.lua:
 		PI
+		TAU
 		FX_PI
+		FX_TAU
 		BIG_NUMBER
 		BIG_FX
 		LEVEL_WIDTH
@@ -28,11 +30,15 @@ content:
 	math.
 		abs(int) -> int
 		floor(int) -> int
+		ceil(int) -> int
+		round(int) -> int
 		random(x1, x2) -> int - fmath.random_int(x1, x2)
 	
 	fxmath.
 		abs(fx) -> fx - fmath.abs_fixedpoint(var)
 		floor(fx) -> fx
+		ceil(fx) -> fx
+		round(fx) -> fx
 		random(x1, x2) -> fx - fmath.random_fixedpoint(x1, x2)
 		length(x1, y1[, x2, y2]) -> fx - returns length of vector with input: (dx, dy) or (x1, y1, x2, y2)
 	

@@ -4,7 +4,15 @@ fxmath = {
 	abs = fmath.abs_fixedpoint,
 	
 	floor = function(a)
-		return fmath.to_fixedpoint(fmath.to_int(a))
+		return a // 1fx
+	end,
+	
+	ceil = function(a)
+		return (a + 1fx) // 1fx
+	end,
+	
+	round = function(a)
+		return (a + 0.2048fx) // 1fx
 	end,
 	
 	random = fmath.random_fixedpoint,
