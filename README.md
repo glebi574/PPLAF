@@ -1,2 +1,2 @@
 # PewPew Live Additional Framework
-View desription.txt for more information
+PewPew Live Additional Framework is a set of modules, created to simplify PewPew Live level creation. To learn more about PPLAF features, check wiki or description.txt.
