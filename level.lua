@@ -1,5 +1,5 @@
 
-require"/dynamic/pplaf/pplaf.lua"
+require'/dynamic/pplaf/pplaf.lua'
 
 player.create(START_POS_X, START_POS_Y)
 entity.create(START_POS_X, START_POS_Y, 'p2')
@@ -13,7 +13,7 @@ local s1 = switch.create({930fx, 1100fx, 980fx, 1150fx}, {1020fx, 1100fx, 1070fx
 local s2 = switch.create({930fx, 1300fx, 980fx, 1350fx}, {1020fx, 1300fx, 1070fx, 1350fx})
 local s3 = switch.create({930fx, 1500fx, 980fx, 1550fx}, {1020fx, 1500fx, 1070fx, 1550fx})
 
-pewpew.configure_player_hud(0, {top_left_line = "0.7 Changes: dynamic heigth; other smol things"})
+pewpew.configure_player_hud(0, {top_left_line = "0.8 Changes: "})
 
 local t, m
 
