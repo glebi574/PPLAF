@@ -8,6 +8,7 @@ entity = {
 	create = function(x, y, preset)
 		local id = pewpew.new_entity(x, y)
 		pewpew.interpolation(id, true)
+		pewpew.wall_collision(id, true)
 		if entity.presets[preset].mesh then
 			pewpew.set_mesh(id, entity.presets[preset].mesh[1], entity.presets[preset].mesh[2])
 		end
@@ -19,12 +20,16 @@ entity = {
 				table.insert(param.weapons, weapons.create(weapon))
 			end
 		end
-		;(entity.constructor[entity.presets[preset].constructor] or NULL_FUNCTION)(id, param)
+		if entity.presets[preset].constructor then
+			entity.constructor[entity.presets[preset].constructor](id, param) end
 		entities[entity.presets[preset].team and 'player' or 'enemy'][id] = param
 		return id
 	end,
 	
 	remove = function(id)
+		local info = entities.player[id] or entities.enemy[id]
+		if entity.presets[info.preset].destructor then
+			entity.destructor[entity.presets[info.preset].destructor](id, info) end
 		entities.player[id] = nil
 		entities.enemy[id] = nil
 	end,

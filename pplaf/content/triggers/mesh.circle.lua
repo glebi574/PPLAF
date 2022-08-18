@@ -1,28 +1,21 @@
 
-require("/dynamic/pplaf/global_variables.lua")
+local vertexes, segments = {}, {{0,}}
 
-local cv = {}
-local cs = {}
+local radius = 100
+local iterator = 56
 
-local r = 100
-local n = 56
+local angle = 6.283185 / iterator
 
-local s = 2 * PI / n
-
-local ct = {0, }
-
-for i = n - 1, 0, -1 do
-	local x = math.cos(s * i) * r
-	local y = math.sin(s * i) * r
-	table.insert(cv, {x, y})
-	table.insert(ct, i)
+for i = iterator - 1, 0, -1 do
+	local x = math.cos(angle * i) * radius
+	local y = math.sin(angle * i) * radius
+	table.insert(vertexes, {x, y})
+	table.insert(segments[1], i)
 end
-
-cs = {ct}
 
 meshes = {
 	{
-		vertexes = cv,
-		segments = cs
+		vertexes = vertexes,
+		segments = segments
 	},
 }

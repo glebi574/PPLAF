@@ -1,7 +1,8 @@
---don't
+--it works without errors, but incorrectly, so don't
 crosshair = {
 	
-	  id = pewpew.new_entity(START_POS_X, START_POS_Y),
+	id = pewpew.new_entity(START_POS_X, START_POS_Y),
+
 	temp = 0fx,
 	
 	main = function()

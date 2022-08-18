@@ -31,7 +31,7 @@ camera = {
 						if l > d then d = l end
 					end
 				end
-				camera.options.heigth = 0.3951fx * camera.options.heigth - 0.400fx * d
+				camera.options.heigth = 0.3951fx * camera.options.heigth - 0.320fx * d
 			end
 			camera.options.x = camera.options.x +
 			((camera.options.x_static or x + camera.options.x_offset + dx) - camera.options.x) * camera.options.speed

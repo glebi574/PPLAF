@@ -9,10 +9,12 @@ pewpew.start_exploding = pewpew.customizable_entity_start_exploding
 pewpew.set_mesh = pewpew.customizable_entity_set_mesh
 pewpew.set_color = pewpew.customizable_entity_set_mesh_color
 pewpew.set_scale = pewpew.customizable_entity_set_mesh_scale
+pewpew.set_xyz_scale = pewpew.customizable_entity_set_mesh_xyz_scale
 pewpew.set_angle = pewpew.customizable_entity_set_mesh_angle
 pewpew.add_angle = pewpew.customizable_entity_add_rotation_to_mesh
 pewpew.interpolation = pewpew.customizable_entity_set_position_interpolation
 pewpew.skip_interpolation = pewpew.customizable_entity_skip_mesh_attributes_interpolation
+pewpew.wall_collision = pewpew.customizable_entity_configure_wall_collision
 
 
 pplaf = {
@@ -47,6 +49,7 @@ pplaf.require'bullets/bullets'
 pplaf.require'bullets/options'
 pplaf.require'triggers/triggers'
 pplaf.require'triggers/switches'
+pplaf.require'walls/walls'
 --pplaf.require''
 
 pewpew.set_level_size(LEVEL_WIDTH, LEVEL_HEIGTH)

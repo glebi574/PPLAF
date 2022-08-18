@@ -14,12 +14,16 @@ bullet = {
 		pewpew.interpolation(id, true)
 		local param = {}
 		param.preset = preset
-		;(bullet.constructor[bullet.presets[preset].constructor] or NULL_FUNCTION)(id, param, ang)
+		if bullet.presets[preset].constructor then
+			bullet.constructor[bullet.presets[preset].constructor](id, param, ang) end
 		bullets[bullet.presets[preset].team and 'player' or 'enemy'][id] = param
 		return id
 	end,
 	
 	remove = function(id)
+		local info = bullets.player[id] or bullets.enemy[id]
+		if bullet.presets[info.preset].destructor then
+			bullet.destructor[bullet.presets[info.preset].destructor](id, info) end
 		bullets.player[id] = nil
 		bullets.enemy[id] = nil
 	end,

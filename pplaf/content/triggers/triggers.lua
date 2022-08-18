@@ -19,9 +19,9 @@ trigger = {
 		end
 		triggers[id] = args
 		if mesh then
-			pewpew.customizable_entity_set_mesh(id, pplaf.path .. "triggers/mesh." .. s .. ".lua", 0)
-			pewpew.customizable_entity_start_spawning(id, 0)
-			pewpew.customizable_entity_set_mesh_xyz_scale(id, x / 100fx, y / 100fx, 1fx)
+			pewpew.set_mesh(id, pplaf.path .. "triggers/mesh." .. s .. ".lua", 0)
+			pewpew.start_spawning(id, 0)
+			pewpew.set_xyz_scale(id, x / 100fx, y / 100fx, 1fx)
 		end
 		return id
 	end,
@@ -42,7 +42,7 @@ trigger = {
 	end,
 	
 	remove = function(id)
-		pewpew.customizable_entity_start_exploding(id, 40)
+		pewpew.start_exploding(id, 40)
 		triggers[id] = nil
 	end
 	

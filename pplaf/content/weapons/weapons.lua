@@ -4,7 +4,8 @@ weapons = {
 	create = function(preset)
 		local param = {}
 		param.preset = preset
-		;(weapons.constructor[weapons.presets[preset].constructor] or NULL_FUNCTION)(id, param)
+		if weapons.presets[preset].constructor then
+			weapons.constructor[weapons.presets[preset].constructor](id, param) end
 		return param
 	end,
 	

@@ -1,32 +1,30 @@
---don't
+
 local walls = {}
 
 wall = {
+
+	G = 0,
+
+	mesh = pplaf.path .. 'walls/mesh.lua',
 	
 	create = function(x1, y1, x2, y2)
-		local id = pewpew.new_entity(x1, y1)
-		pewpew.set_mesh(id, pplaf.path .. "walls/mesh.lua", 0)
-		pewpew.set_angle(id, fmath.atan2(y2 - y1, x2 - x1), 0fx, 0fx, 1fx)
-		pewpew.set_scale(id, fxmath.length(x1, y1, x2, y2) / 100fx)
-		w_id = pewpew.add_wall(x1, y1, x2, y2)
-		table.insert(walls, {
-			m_id = id,
-			w_id = w_id
-		})
-		return id
+		wall.G = wall.G + 1
+		local mesh_id = pewpew.new_entity(x1, y1)
+		pewpew.set_mesh(mesh_id, wall.mesh, 0)
+		pewpew.set_angle(mesh_id, fmath.atan2(y2 - y1, x2 - x1), 0fx, 0fx, 1fx)
+		pewpew.set_xyz_scale(mesh_id, fxmath.length(x1, y1, x2, y2) / 100fx, 1fx, 1fx)
+		wall_id = pewpew.add_wall(x1, y1, x2, y2)
+		walls[wall.G] = {
+			wall_id = wall_id,
+			mesh_id = mesh_id
+		}
+		return wall.G
 	end,
 	
-	find = function(id)
-		for i, w in ipairs(walls) do
-			if w.m_id == id then return i end
-		end
-	end,
-	
-	remove = function(id)
-		local i = wall.find(id)
-		pewpew.remove_wall(walls[i].w_id)
-		table.remove(walls, i)
-		pewpew.customizable_entity_start_exploding(id, 40)
+	remove = function(index)
+		pewpew.remove_wall(walls[index].wall_id)
+		pewpew.customizable_entity_start_exploding(walls[index].mesh_id, 40)
+		walls[index] = nil
 	end
 	
 }
