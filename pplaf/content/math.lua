@@ -1,5 +1,5 @@
 
-math = {
+pplaf.math = {
 	
 	abs = function(a)
 		return a < 0 and -a or a

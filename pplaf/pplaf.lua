@@ -3,54 +3,38 @@ _G = nil
 _ENV.pewpew_old = nil
 _ENV.fmath_old = nil
 
-pewpew.new_entity = pewpew.new_customizable_entity
-pewpew.start_spawning = pewpew.customizable_entity_start_spawning
-pewpew.start_exploding = pewpew.customizable_entity_start_exploding
-pewpew.set_mesh = pewpew.customizable_entity_set_mesh
-pewpew.set_color = pewpew.customizable_entity_set_mesh_color
-pewpew.set_scale = pewpew.customizable_entity_set_mesh_scale
-pewpew.set_xyz_scale = pewpew.customizable_entity_set_mesh_xyz_scale
-pewpew.set_angle = pewpew.customizable_entity_set_mesh_angle
-pewpew.add_angle = pewpew.customizable_entity_add_rotation_to_mesh
-pewpew.interpolation = pewpew.customizable_entity_set_position_interpolation
-pewpew.skip_interpolation = pewpew.customizable_entity_skip_mesh_attributes_interpolation
-pewpew.wall_collision = pewpew.customizable_entity_configure_wall_collision
-
-
 pplaf = {
 	
 	path = '/dynamic/pplaf/content/',
 
-	require = function(lib)
-		return require(pplaf.path .. lib .. ".lua")
+	require = function(libs)
+		for _, lib in ipairs(libs) do
+			require(pplaf.path .. lib .. ".lua")
+		end
 	end,
 
 	main = function()
 		TIME = TIME + 1
-		 entity.main()
-		 player.main()
-		 camera.main()
-		weapons.main()
-		 bullet.main()
+		pplaf.entity.main()
+		pplaf.player.main()
+		pplaf.camera.main()
+		pplaf.weapon.main()
 	end
 
 }
 
-pplaf.require'global_variables'
-pplaf.require'math'
-pplaf.require'fxmath'
-pplaf.require'camera'
-pplaf.require'entities/entities'
-pplaf.require'entities/options'
-pplaf.require'entities/player'
-pplaf.require'weapons/weapons'
-pplaf.require'weapons/options'
-pplaf.require'bullets/bullets'
-pplaf.require'bullets/options'
-pplaf.require'triggers/triggers'
-pplaf.require'triggers/switches'
-pplaf.require'walls/walls'
---pplaf.require''
+pplaf.require({
+	'global_variables',
+	'math',
+	'fxmath',
+	'camera',
+	'entity/main',
+	'entity/player',
+	'weapon/main',
+	'trigger/main',
+	'trigger/switch',
+	'wall/main'
+})
 
 pewpew.set_level_size(LEVEL_WIDTH, LEVEL_HEIGTH)
 

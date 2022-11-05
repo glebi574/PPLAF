@@ -1,7 +1,7 @@
 
-PewPew Live version: 0.5.128
+PewPew Live version: 0.6.132
 Lua version: 5.3
-PPLAF version: 0.7.2
+PPLAF version: 0.8
 
 content:
 	

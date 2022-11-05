@@ -1,5 +1,5 @@
 
-fxmath = {
+pplaf.fxmath = {
 	
 	abs = fmath.abs_fixedpoint,
 	
