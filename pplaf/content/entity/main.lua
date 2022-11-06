@@ -27,11 +27,11 @@ pplaf.entity = {
 		if pplaf.entity.type[type].destructor then
 			function entity:destroy()
 				pplaf.entity.type[type].destructor(self)
-				pplaf.entities[self.union][self.id] = nil
+				pplaf.entities[self.type.union][id] = nil
 			end
-			pewpew.customizable_entity_configure_wall_collision(id, true, entity.destroy)
+			pewpew.customizable_entity_configure_wall_collision(id, true, function() return entity:destroy() end)
 		end
-		pplaf.entities[pplaf.entity.type[type].union][id] = entity
+		pplaf.entities[entity.type.union][id] = entity
 		return entity
 	end,
 	
@@ -41,9 +41,10 @@ pplaf.entity = {
 				if entity.type.ai then
 					entity.type.ai(entity)
 				end
-				if not entity.weapons then break end
-				for _, weapon in ipairs(entity.weapons) do
-					weapon.type.ai(weapon)
+				if entity.weapons then
+					for _, weapon in ipairs(entity.weapons) do
+						weapon.type.ai(weapon)
+					end
 				end
 			end
 		end

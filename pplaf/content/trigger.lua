@@ -25,10 +25,10 @@ pplaf.trigger = {
 			end
 			mesh = 'circle'
 		end
-		if mesh_path then
+		if meshes then
 			pewpew.customizable_entity_set_mesh(trigger.id, meshes .. mesh .. '.lua', 0)
 			pewpew.customizable_entity_start_spawning(trigger.id, 0)
-			pewpew.customizable_entity_set_mesh_xyz_scale(trigger.id, x / 100fx, y / 100fx, z)
+			pewpew.customizable_entity_set_mesh_xyz_scale(trigger.id, x / 100fx, y / 100fx, 1fx)
 		end
 		function trigger:destroy()
 			pewpew.customizable_entity_start_exploding(self.id, 40)

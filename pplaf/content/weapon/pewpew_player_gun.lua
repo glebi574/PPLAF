@@ -9,7 +9,7 @@ return {
     elseif pplaf.player.shoot_a ~= 0fx then
       weapon.recharge = weapon.type.recharge
       local x, y = pewpew.entity_get_position(weapon.entity.id)
-      pplaf.entity.create(x, y, 'pewpew_player_bullet', pplaf.player.shoot_a)
+      pplaf.entity.create(x, y, 'pewpew_player_bullet', pplaf.player.shoot_ang)
     end
   end
 }

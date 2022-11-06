@@ -4,6 +4,7 @@ return {
   lifetime = 120,
   constructor = function(bullet, args)
     pewpew.customizable_entity_skip_mesh_attributes_interpolation(bullet.id)
+    pewpew.customizable_entity_start_spawning(bullet.id, 0)
     pewpew.customizable_entity_set_mesh_angle(bullet.id, args, 0fx, 0fx, 1fx)
     bullet.dy, bullet.dx = fmath.sincos(args)
     bullet.dx = bullet.dx * bullet.type.speed
