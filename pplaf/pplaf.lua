@@ -18,7 +18,6 @@ pplaf = {
 		pplaf.entity.main()
 		pplaf.player.main()
 		pplaf.camera.main()
-		pplaf.weapon.main()
 	end
 
 }
@@ -31,9 +30,9 @@ pplaf.require({
 	'entity/main',
 	'entity/player',
 	'weapon/main',
-	'trigger/main',
-	'trigger/switch',
-	'wall/main'
+	'trigger',
+	'switch',
+	'wall'
 })
 
 pewpew.set_level_size(LEVEL_WIDTH, LEVEL_HEIGTH)

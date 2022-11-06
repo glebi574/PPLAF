@@ -1,5 +1,5 @@
 
-pplaf.entities = {player = {}, enemy = {}}
+pplaf.entities = {player = {}, enemy = {}, player_bullets = {}, enemy_bullets = {}}
 
 pplaf.entity = {
 
@@ -13,12 +13,14 @@ pplaf.entity = {
 		local id = pewpew.new_customizable_entity(x, y)
 		pewpew.customizable_entity_set_position_interpolation(id, true)
 		pewpew.customizable_entity_configure_wall_collision(id, true)
-		pewpew.customizable_entity_set_mesh(id, pplaf.entity[type].path .. type .. '/mesh.lua', 0)
+		pewpew.customizable_entity_set_mesh(id, pplaf.entity.type[type].path .. type .. '/mesh.lua', 0)
 		local entity = 	{
 										 id = id,
-									 type = type,
-								weapons = pplaf.weapon.create(type)
+									 type = pplaf.entity.type[type]
 										}
+		if pplaf.entity.type[type].weapons then
+			entity.weapons = pplaf.weapon.create(entity, type)
+		end
 		if pplaf.entity.type[type].constructor then
 			pplaf.entity.type[type].constructor(entity, args)
 		end
@@ -27,18 +29,21 @@ pplaf.entity = {
 				pplaf.entity.type[type].destructor(self)
 				pplaf.entities[self.union][self.id] = nil
 			end
+			pewpew.customizable_entity_configure_wall_collision(id, true, entity.destroy)
 		end
-		pplaf.entities[id] = entity
+		pplaf.entities[pplaf.entity.type[type].union][id] = entity
 		return entity
 	end,
 	
 	main = function()
 		for _, union in pairs(pplaf.entities) do
-			for _, entity in pairs(team) do
-				pplaf.entity.type[entity.type].ai(entity)
+			for _, entity in pairs(union) do
+				if entity.type.ai then
+					entity.type.ai(entity)
+				end
 				if not entity.weapons then break end
 				for _, weapon in ipairs(entity.weapons) do
-					pplaf.weapon.type[weapon.type].ai(entity)
+					weapon.type.ai(weapon)
 				end
 			end
 		end
@@ -53,4 +58,4 @@ pplaf.entity = {
 	
 }
 
-pplaf.entity.load(pplaf.path .. 'entity/types/', require(pplaf.path .. 'entity/types/list.lua'))
+pplaf.entity.load(pplaf.path .. 'entity/', {'pewpew_player', 'pewpew_player_bullet'})

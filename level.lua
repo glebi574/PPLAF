@@ -1,40 +1,25 @@
 
 require'/dynamic/pplaf/pplaf.lua'
 
-player.create(START_POS_X, START_POS_Y)
-entity.create(START_POS_X, START_POS_Y, 'p2')
+local player = pplaf.player.create(START_POS_X, START_POS_Y)
 
-new_string(1000fx, 900fx, 'Use shooting joystick to control second player')
-new_string(1000fx, 1200fx, 'Add bot, following second player')
-new_string(1000fx, 1400fx, 'Configure dynamic heigth')
-new_string(1000fx, 1600fx, 'Configure type of counted entities')
+new_string(1000fx, 1200fx, 'Configure dynamic heigth')
 
-local s1 = switch.create({930fx, 1100fx, 980fx, 1150fx}, {1020fx, 1100fx, 1070fx, 1150fx})
-local s2 = switch.create({930fx, 1300fx, 980fx, 1350fx}, {1020fx, 1300fx, 1070fx, 1350fx})
-local s3 = switch.create({930fx, 1500fx, 980fx, 1550fx}, {1020fx, 1500fx, 1070fx, 1550fx})
+local s1 = pplaf.switch.create({{930fx, 1100fx, 980fx, 1150fx}, {1020fx, 1100fx, 1070fx, 1150fx}},
+															 '/dynamic/pplaf_assets/trigger_meshes/')
 
-pewpew.configure_player_hud(0, {top_left_line = "0.8 Changes: "})
+pewpew.configure_player_hud(0, {top_left_line = "0.8 Changes: switches with any amount of triggers, redesigned types system."})
 
-local t, m
+local t
 
 pewpew.add_update_callback(function()
 	if GAME_STATE then
 		
 		pplaf.main()
 		
-		t, m = switch.get(s1)
+		t = s1:get(pewpew.entity_get_position(player.id))
 		if t then
-			entity.create(1000fx, 1400fx, '_ai')
-		end
-		
-		t, m = switch.get(s2)
-		if t then
-			camera.configure({dynamic_heigth = not m})
-		end
-		
-		t, m = switch.get(s3)
-		if t then
-			camera.configure({count_custom = not m})
+			pplaf.camera.configure({dynamic_heigth = not pplaf.camera.options.dynamic_heigth})
 		end
 		
 	end

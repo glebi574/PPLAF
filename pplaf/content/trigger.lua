@@ -19,7 +19,7 @@ pplaf.trigger = {
 			mesh = 'rectangle'
 		elseif #param == 3 then -- x, y, r
 			x, y = param[3], param[3]
-			trigger.id = pewpew.new_customizable_entity(param[1], [param[2]])
+			trigger.id = pewpew.new_customizable_entity(param[1], param[2])
 			function trigger:get(x, y)
 				return pplaf.fxmath.length(x, y, self.param[1], self.param[2]) <= self.param[3]
 			end

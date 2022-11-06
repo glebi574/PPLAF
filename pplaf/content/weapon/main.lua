@@ -3,16 +3,16 @@ pplaf.weapon = {
 	
 	type = {},
 
-	create = function(type)
+	create = function(entity, type)
 		local weapons = {}
-		for _, type in ipairs(pplaf.entity.type[type]) do
-			local weapon = {type = type}
-			if pplaf.weapon.type[type].constructor then
-				pplaf.weapon.type[type].constructor(weapon)
+		for _, weapon_type in ipairs(pplaf.entity.type[type].weapons) do
+			local weapon = {type = pplaf.weapon.type[weapon_type], entity = entity}
+			if pplaf.weapon.type[weapon_type].constructor then
+				pplaf.weapon.type[weapon_type].constructor(weapon)
 			end
 			table.insert(weapons, weapon)
 		end
-		if weapons != {} then return weapons end
+		return weapons
 	end,
 
 	load = function(path, list)
@@ -23,4 +23,4 @@ pplaf.weapon = {
 	
 }
 
-pplaf.weapon.load(pplaf.path .. 'weapon/types/', require(pplaf.path .. 'weapon/types/list.lua'))
+pplaf.weapon.load(pplaf.path .. 'weapon/', {'pewpew_player_gun'})

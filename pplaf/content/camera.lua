@@ -45,7 +45,7 @@ pplaf.camera = {
 	
 	configure = function(args)
 		for i, f in pairs(args) do
-			options[i] = f
+			pplaf.camera.options[i] = f
 		end
 	end
 	

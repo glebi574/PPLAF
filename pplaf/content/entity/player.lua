@@ -6,27 +6,28 @@ pplaf.player = {
 	shoot_ang = 0fx,
 	shoot_a = 0fx,
 	
-	create = function(x, y)
+	create = function(x, y, args)
 		local id = pewpew.new_player_ship(x, y, 0)
-		pplaf.entities.player[id] = {
-			type = 'pewpew_player',
-			union = 'player',
-		  weapons = pplaf.weapon.create'pewpew_player_gun'
-		}
+		local player = {
+										id = id,
+										type = pplaf.entity.type.pewpew_player
+										}
+		player.weapons = pplaf.weapon.create(player, 'pewpew_player')
 		if pplaf.entity.type.pewpew_player.constructor then
-			pplaf.entity.type.pewpew_player.constructor(entity, args)
+			pplaf.entity.type.pewpew_player.constructor(player, args)
 		end
 		if pplaf.entity.type.pewpew_player.destructor then
-			function entity:destroy()
+			function player:destroy()
 				pplaf.entity.type.pewpew_player.destructor(self)
 				pplaf.entities[self.union][self.id] = nil
 			end
 		end
-		return pplaf.entities.player[id]
+		pplaf.entities.player[id] = player
+		return player
 	end,
 	
 	main = function()
-		player.move_ang, player.move_a, player.shoot_ang, player.shoot_a = pewpew.get_player_inputs(0)
+		pplaf.player.move_ang, pplaf.player.move_a, pplaf.player.shoot_ang, pplaf.player.shoot_a = pewpew.get_player_inputs(0)
 	end
 	
 }
