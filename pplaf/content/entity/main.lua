@@ -13,23 +13,28 @@ pplaf.entity = {
 		local id = pewpew.new_customizable_entity(x, y)
 		pewpew.customizable_entity_set_position_interpolation(id, true)
 		pewpew.customizable_entity_configure_wall_collision(id, true)
-		pewpew.customizable_entity_set_mesh(id, pplaf.entity.type[type].path .. type .. '/mesh.lua', 0)
+		pewpew.customizable_entity_set_mesh(id, pplaf.entity.type[type].path .. '/mesh/normal.lua', 0)
 		local entity = 	{
 										 id = id,
 									 type = pplaf.entity.type[type]
 										}
-		if pplaf.entity.type[type].weapons then
+		if entity.type.weapons then
 			entity.weapons = pplaf.weapon.create(entity, type)
 		end
-		if pplaf.entity.type[type].constructor then
-			pplaf.entity.type[type].constructor(entity, args)
+		if entity.type.animation then
+			entity.animation = {
+				frame = 1,
+				timer = 1
+			}
 		end
-		if pplaf.entity.type[type].destructor then
+		if entity.type.constructor then
+			entity.type.constructor(entity, args)
+		end
+		if entity.type.destructor then
 			function entity:destroy()
-				pplaf.entity.type[type].destructor(self)
+				entity.type.destructor(self)
 				pplaf.entities[self.type.union][id] = nil
 			end
-			pewpew.customizable_entity_configure_wall_collision(id, true, function() return entity:destroy() end)
 		end
 		pplaf.entities[entity.type.union][id] = entity
 		return entity
@@ -40,6 +45,17 @@ pplaf.entity = {
 			for _, entity in pairs(union) do
 				if entity.type.ai then
 					entity.type.ai(entity)
+					if entity.type.animation then
+						entity.animation.timer = entity.animation.timer + 1
+						if entity.animation.timer == entity.type.animation.frequency then
+							entity.animation.timer = 1
+							entity.animation.frame = entity.animation.frame + 1
+						end
+						if entity.animation.frame == entity.type.animation.frames then
+							entity.animation.frame = 1
+						end
+						pewpew.customizable_entity_set_mesh(entity.id, entity.path .. '/mesh/normal.lua', entity.animation.frame - 1)
+					end
 				end
 				if entity.weapons then
 					for _, weapon in ipairs(entity.weapons) do
@@ -53,7 +69,7 @@ pplaf.entity = {
 	load = function(path, list)
 		for _, name in pairs(list) do
 			pplaf.entity.type[name] = require(path .. name .. '/type.lua')
-			pplaf.entity.type[name].path = path
+			pplaf.entity.type[name].path = path .. name
 		end
 	end
 	
