@@ -17,6 +17,18 @@ pplaf.math = {
 		return (a + 0.5) // 1
 	end,
 	
-	random = fmath.random_int
+	random = fmath.random_int,
+	
+	sqrt = function(a)
+		return a ^ 0.5
+	end,
+	
+	length = function(...)
+		local args = {...}
+		if #args == 2 then return pplaf.math.sqrt(args[1] ^ 2 + args[2] ^ 2) end --dx, dy
+		if #args == 4 then --x1, y1, x2, y2
+			return pplaf.math.sqrt((args[3] - args[1]) ^ 2 + (args[4] - args[2]) ^ 2)
+		end
+	end
 	
 }

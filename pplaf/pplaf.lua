@@ -4,38 +4,43 @@ _ENV.pewpew_old = nil
 _ENV.fmath_old = nil
 
 pplaf = {
-	
-	path = '/dynamic/pplaf/content/',
 
-	require = function(libs)
-		for _, lib in ipairs(libs) do
-			require(pplaf.path .. lib .. ".lua")
+	require = function(path, ...) --load ... files from certain folder
+		if not path then path = pplaf.path end
+		for _, lib in ipairs({...}) do
+			require(path .. lib .. ".lua")
 		end
 	end,
 
-	main = function()
+	main = function() --main callback
 		TIME = TIME + 1
 		pplaf.entity.main()
 		pplaf.player.main()
 		pplaf.camera.main()
+	end,
+	
+	init = function(path) --load pplaf
+		pplaf.path = path
+		pplaf.content = path .. 'content/'
+		pplaf.require(nil,
+			'settings',
+			'global_variables'
+		)
+		pplaf.require(pplaf.content,
+			'math',
+			'fxmath',
+			'camera',
+			'entity/main',
+			'entity/player',
+			'weapon/main',
+			'trigger',
+			'switch',
+			'wall'
+		)
+		pewpew.set_level_size(LEVEL_WIDTH, LEVEL_HEIGTH)
 	end
 
 }
-
-pplaf.require({
-	'global_variables',
-	'math',
-	'fxmath',
-	'camera',
-	'entity/main',
-	'entity/player',
-	'weapon/main',
-	'trigger',
-	'switch',
-	'wall'
-})
-
-pewpew.set_level_size(LEVEL_WIDTH, LEVEL_HEIGTH)
 
 function chance(c)
 	return pplaf.math.random(1, 100) < c
@@ -56,7 +61,7 @@ function stop_game()
 	pewpew.stop_game()
 end
 
-function table.copy(arr)
+function table.copy(arr) --copy table by value
 	local copy = {}
 	for key, value in pairs(arr) do copy[key] = value end
 	return copy

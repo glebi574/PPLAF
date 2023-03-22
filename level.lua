@@ -1,5 +1,6 @@
 
 require'/dynamic/pplaf/pplaf.lua'
+pplaf.init'/dynamic/pplaf/'
 
 local player = pplaf.player.create(START_POS_X, START_POS_Y)
 

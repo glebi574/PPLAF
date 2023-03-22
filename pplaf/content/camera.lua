@@ -4,46 +4,47 @@ pplaf.camera = {
 	options = {},
 	
 	main = function()
-		local x, y, dx, dy, n, d = 0fx, 0fx, 0fx, 0fx, 0fx, -BIG_FX
-		local options = pplaf.camera.options
+		local x, y, dx, dy, n, d = 0fx, 0fx, 0fx, 0fx, 0fx, -BIG_NUMBER_FX
 		for id in pairs(pplaf.entities.player) do
 			local px, py = pewpew.entity_get_position(id)
 			x = x + px
 			y = y + py
 			n = n + 1fx
 		end
-		if n == 0fx then
+		if n == 0fx then --no entities which camera can follow
 			dy, dx = fmath.sincos(pplaf.player.move_ang)
-			local v = pplaf.player.move_a * options.speed
-			options.x = options.x + dx * v
-			options.y = options.y + dy * v
-			options.heigth = options.heigth * 0.3891fx
+			local v = pplaf.player.move_a * pplaf.camera.options.speed
+			pplaf.camera.options.x = pplaf.camera.options.x + dx * v
+			pplaf.camera.options.y = pplaf.camera.options.y + dy * v
+			pplaf.camera.options.heigth = pplaf.camera.options.heigth * 0.3891fx
 		else
 			x = x / n
 			y = y / n
-			if options.shooting_offset then
+			if pplaf.camera.options.shooting_offset then
 				dy, dx = fmath.sincos(pplaf.player.shoot_ang)
-				local v = pplaf.player.shoot_a * options.shooting_offset
+				local v = pplaf.player.shoot_a * pplaf.camera.options.shooting_offset
 				dx = dx * v
 				dy = dy * v
 			end
-			if options.dynamic_heigth then
+			if pplaf.camera.options.dynamic_heigth then
 				for id in pairs(pplaf.entities.player) do
 					local px, py = pewpew.entity_get_position(id)
 					local l = pplaf.fxmath.length(px, py, x, y)
 					if l > d then d = l end
 				end
-				options.heigth = 0.3951fx * options.heigth - 0.320fx * d
+				pplaf.camera.options.heigth = 0.3951fx * pplaf.camera.options.heigth - 0.320fx * d
 			end
-			options.x = options.x + ((options.x_static or x + options.x_offset + dx) - options.x) * options.speed
-			options.y = options.y + ((options.y_static or y + options.y_offset + dy) - options.y) * options.speed
+			pplaf.camera.options.x = pplaf.camera.options.x +
+				((pplaf.camera.options.x_static or x + pplaf.camera.options.x_offset + dx) - pplaf.camera.options.x) * pplaf.camera.options.speed
+			pplaf.camera.options.y = pplaf.camera.options.y +
+				((pplaf.camera.options.y_static or y + pplaf.camera.options.y_offset + dy) - pplaf.camera.options.y) * pplaf.camera.options.speed
 		end
-		pewpew.configure_player(0, {camera_x_override = options.x,
-																camera_y_override = options.y,
-																  camera_distance = options.heigth})
+		pewpew.configure_player(0, {camera_x_override = pplaf.camera.options.x,
+																camera_y_override = pplaf.camera.options.y,
+																  camera_distance = pplaf.camera.options.heigth})
 	end,
 	
-	configure = function(args)
+	configure = function(args) --change camera options
 		for i, f in pairs(args) do
 			pplaf.camera.options[i] = f
 		end

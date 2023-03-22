@@ -1,12 +1,7 @@
 
-pplaf.triggers = {}
-
 pplaf.trigger = {
 
-	G = 0,
-
-	create = function(param, meshes)
-		pplaf.trigger.G = pplaf.trigger.G + 1
+	create = function(param, mesh_folder_path)
 		local trigger = {param = param}
 		local x, y, mesh
 		if #param == 4 then -- x1, y1, x2, y2
@@ -25,16 +20,15 @@ pplaf.trigger = {
 			end
 			mesh = 'circle'
 		end
-		if meshes then
-			pewpew.customizable_entity_set_mesh(trigger.id, meshes .. mesh .. '.lua', 0)
+		if mesh_folder_path then
+			pewpew.customizable_entity_set_mesh(trigger.id, mesh_folder_path .. mesh .. '.lua', 0)
 			pewpew.customizable_entity_start_spawning(trigger.id, 0)
-			pewpew.customizable_entity_set_mesh_xyz_scale(trigger.id, x / 100fx, y / 100fx, 1fx)
+			pewpew.customizable_entity_set_mesh_xyz_scale(trigger.id, x, y, 1fx)
 		end
 		function trigger:destroy()
 			pewpew.customizable_entity_start_exploding(self.id, 40)
 			self = nil
 		end
-		pplaf.triggers[pplaf.trigger.G] = trigger
 		return trigger
 	end
 	

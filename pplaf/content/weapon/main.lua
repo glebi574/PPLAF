@@ -15,12 +15,12 @@ pplaf.weapon = {
 		return weapons
 	end,
 
-	load = function(path, list)
-		for _, name in pairs(list) do
+	load = function(path, ...)
+		for _, name in pairs({...}) do
 			pplaf.weapon.type[name] = require(path .. name .. '.lua')
 		end
 	end
 	
 }
 
-pplaf.weapon.load(pplaf.path .. 'weapon/', {'pewpew_player_gun'})
+pplaf.weapon.load(pplaf.content .. 'weapon/', 'pewpew_player_gun')

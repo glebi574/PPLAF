@@ -1,7 +1,7 @@
 {
   "name":"PPLAF 0.8",
   "descriptions":["#ff3333ffError"],
-  "information":"#99ff33ffPPLAF #ffffffffis a set of tools, made to simplify level development. Currently it increases your camera movement abilities, lets you create entity types and there are many other things that will be added!",
+  "information":"#99ff33ffPPLAF #ffffffffis a set of tools, made to simplify entity development and level development in general.",
   "entry_point":"level.lua",
   "has_score_leaderboard":false
 }

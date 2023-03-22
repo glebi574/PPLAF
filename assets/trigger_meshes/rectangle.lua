@@ -1,4 +1,4 @@
-local a = 100
+local a = 1
 
 meshes = {
 	{

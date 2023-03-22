@@ -1,6 +1,6 @@
 local vertexes, segments = {}, {{0,}}
 
-local radius = 100
+local radius = 1
 local iterator = 56
 
 local angle = 6.283185 / iterator

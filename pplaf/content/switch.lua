@@ -1,20 +1,15 @@
 
-pplaf.switches = {}
-
 pplaf.switch = {
-	
-	G = 0,
 
-	create = function(triggers, meshes)
-		pplaf.switch.G = pplaf.switch.G + 1
-		local switch = {param = triggers, meshes = meshes, state = 1, active = false}
-		switch.current = pplaf.trigger.create(triggers[1], meshes)
+	create = function(triggers, mesh_folder_path)
+		local switch = {param = triggers, mesh_folder_path = mesh_folder_path, state = 1, active = false}
+		switch.current = pplaf.trigger.create(triggers[1], mesh_folder_path)
 		function switch:get(x, y)
 			self.active = self.current:get(x, y)
 			if self.active then
 				self.current:destroy()
 				self.state = (self.state < #self.param) and (self.state + 1) or 1
-				self.current = pplaf.trigger.create(self.param[self.state], self.meshes)
+				self.current = pplaf.trigger.create(self.param[self.state], self.mesh_folder_path)
 			end
 			return self.active
 		end
