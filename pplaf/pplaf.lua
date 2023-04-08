@@ -17,6 +17,7 @@ pplaf = {
 		pplaf.entity.main()
 		pplaf.player.main()
 		pplaf.camera.main()
+		pplaf.animation.main()
 	end,
 	
 	init = function(path) --load pplaf
@@ -35,7 +36,8 @@ pplaf = {
 			'weapon/main',
 			'trigger',
 			'switch',
-			'wall'
+			'wall',
+			'animation'
 		)
 		pewpew.set_level_size(LEVEL_WIDTH, LEVEL_HEIGTH)
 	end
