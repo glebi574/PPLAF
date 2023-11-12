@@ -37,6 +37,7 @@ function proto:set_update_callback(f)
 	return pewpew.entity_set_update_callback(self.id, f)
 end
 function proto:destroy()
+  self.is_alive = false
 	return pewpew.entity_destroy(self.id)
 end
 

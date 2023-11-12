@@ -45,7 +45,7 @@ pplaf.entity = {
   -- differences in type loading methods are commented below
   
   load_by_typed_dir = function(path, ...) -- load entities from folder; entities are stored in folders with type declared as entity.lua
-    for _, name in pairs({...}) do
+    for _, name in ipairs{...} do
       local folder_path = path .. name .. '/'
       local file_path = folder_path .. 'entity.lua'
       pplaf.entity.types[name] = require(file_path)
@@ -56,7 +56,7 @@ pplaf.entity = {
   end,
   
   load_by_typed_files = function(path, ...) -- load entities from folder; entity types are stored in one folder with respective names
-    for _, name in pairs({...}) do
+    for _, name in ipairs{...} do
       local file_path = path .. name .. '.lua'
       pplaf.entity.types[name] = require(file_path)
       pplaf.entity.types[name].file_path = file_path
@@ -180,6 +180,9 @@ end
 local function get_groupLE(entity) -- get list of entities from group of this entity
   return __entities[__groups[entity.type.group]]
 end
+
+__DEF_PPLAF_ENTITY_MODIFY = modify_entity
+__DEF_PPLAF_ENTITY_STORE = store_entity
 
 --[[
   
