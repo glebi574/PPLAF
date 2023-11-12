@@ -42,10 +42,12 @@ pplaf.entity = {
     setmetatable(pplaf.entity.type_proto.proto, {__index = pplaf.entity.pewpew_proto})
   end,
   
-  load_by_typed_dir = function(path, ...) -- load entities from folder; entities are stored in folders with type declared as type.lua
+  -- differences in type loading methods are commented below
+  
+  load_by_typed_dir = function(path, ...) -- load entities from folder; entities are stored in folders with type declared as entity.lua
     for _, name in pairs({...}) do
       local folder_path = path .. name .. '/'
-      local file_path = folder_path .. 'type.lua'
+      local file_path = folder_path .. 'entity.lua'
       pplaf.entity.types[name] = require(file_path)
       pplaf.entity.types[name].folder_path = folder_path
       pplaf.entity.types[name].file_path = file_path
@@ -87,7 +89,7 @@ local function maintain_prototypes(type) -- maintains prototype inheritance
   ensure_proto(type)
   setmetatable(type.proto, {__index = pplaf.entity.pewpew_proto}) -- assign pewpew prototype to entity prototype; will be overriden by other prototypes if possible and required
   
-  if not pplaf.entity.type_proto then -- if type prototype wasn't set assign pewpew prototype directly to entity prototype
+  if not pplaf.entity.type_proto then -- if type prototype wasn't set, do nothing
     return nil
   end -- if type prototype was set, assign it to type
   setmetatable(type, {__index = pplaf.entity.type_proto})
@@ -106,9 +108,14 @@ local function modify_entity(entity, ...) -- entity modifications during it's in
   if entity.type.weapons then -- if entity has weapons, create them
     pplaf.weapons.create(entity)
   end
-  function entity:destroyA(...) -- destroyA maintains entity removal and calls destructor if possible
+  function entity:destroyA(entity, ...) -- destroyA maintains entity removal and calls destructor if possible
     if entity.type.destructor then
-      entity.type.destructor(...)
+      entity.type.destructor(entity, ...)
+    end
+    for weapon_index, weapon in ipairs(entity.weapons) do
+      if weapon.type.destructor then
+        weapon.type.destructor(weapon)
+      end
     end
     table.insert(__to_destroy[__groups[entity.type.group]], entity.__indexP)
   end
@@ -235,10 +242,14 @@ end
     
     folder/
       entity1/
-        type.lua
+        entity.lua
+        weapon.lua
+        mesh.lua
+        animation.lua
+        sounds.lua
         ...
       entity2/
-        type.lua
+        entity.lua
         ...
       ...
     
@@ -251,7 +262,12 @@ end
     folder/
       entity1.lua
       entity2.lua
-        ...
+      ...
+    other_folder/
+      weapon1.lua
+      weapon2.lua
+      ...
+    ...
     
     load_by_typed_files('/dynamic/folder/', 'entity1', 'entity2')
     
