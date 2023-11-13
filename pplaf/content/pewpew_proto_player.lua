@@ -41,4 +41,4 @@ function proto:destroy()
 	return pewpew.entity_destroy(self.id)
 end
 
-pplaf.player.pewpew_proto = proto
+return proto

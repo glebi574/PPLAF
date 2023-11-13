@@ -88,4 +88,4 @@ function proto:start_exploding(time)
 	return pewpew.customizable_entity_start_exploding(self.id, time)
 end
 
-pplaf.entity.pewpew_proto = proto
+return proto

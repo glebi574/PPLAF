@@ -1,7 +1,5 @@
-﻿
--- maintains stuff related to entities, so you don't have to. Simplifies custom entity development
 
-require(pplaf.content .. 'pewpew_proto.lua')
+-- maintains stuff related to entities, so you don't have to. Simplifies custom entity development
 
 local entities = {} -- entities, stored in their respective groups
 local __entities = {} -- entities table, used to actually maintain entities
@@ -11,78 +9,15 @@ local __group_iter = 1
 local __groups = {} -- list of groups' indexes
 local __groupsL = {} -- list of groups
 
-pplaf.entity = {
-  
-  types = {}, -- stores loaded entity types
-  
-  add_group = function(group) -- adds group in entities array
-    entities[group] = {}
-    table.insert(__entities, {})
-    table.insert(__to_destroy, {})
-    table.insert(__groupsL, group)
-    __groups[group] = __group_iter
-    __group_iter = __group_iter + 1
-  end,
-  
-  get_entities = function() -- returns entities array
-    return entities
-  end,
-  
-  get_group = function(group) -- returns certain group array from entities array
-    return entities[group]
-  end,
-  
-  get_groupL = function(group) -- returns certain group array from entities array, possible to iterate through ipairs
-    return __entities[__groups[group]]
-  end,
-  
-  set_type_proto = function(path) -- this prototype will be assigned to every new loaded type
-    pplaf.entity.type_proto = require(path)
-    ensure_proto(pplaf.entity.type_proto)
-    setmetatable(pplaf.entity.type_proto.proto, {__index = pplaf.entity.pewpew_proto})
-  end,
-  
-  -- differences in type loading methods are commented below
-  
-  load_by_typed_dir = function(path, ...) -- load entities from folder; entities are stored in folders with type declared as entity.lua
-    for _, name in ipairs{...} do
-      local folder_path = path .. name .. '/'
-      local file_path = folder_path .. 'entity.lua'
-      pplaf.entity.types[name] = require(file_path)
-      pplaf.entity.types[name].folder_path = folder_path
-      pplaf.entity.types[name].file_path = file_path
-      maintain_prototypes(pplaf.entity.types[name])
-    end
-  end,
-  
-  load_by_typed_files = function(path, ...) -- load entities from folder; entity types are stored in one folder with respective names
-    for _, name in ipairs{...} do
-      local file_path = path .. name .. '.lua'
-      pplaf.entity.types[name] = require(file_path)
-      pplaf.entity.types[name].file_path = file_path
-      maintain_prototypes(pplaf.entity.types[name])
-    end
-  end,
-  
-  create = function(x, y, type, ...) -- create entity in position, with type and pass any parameters to constructor(if it exists)
-    local id = pewpew.new_customizable_entity(x, y)
-    local entity = {
-      id = id,
-      type = pplaf.entity.types[type],
-      is_alive = true,
-      is_exploding = false,
-    }
-    modify_entity(entity, ...) -- set prototype, call constructor, set destruction function, create weapons; if required and possible*
-    store_entity(entity)
-    return entity
-  end,
-  
-  main = function()
-    maintain_ai()
-    maintain_destruction()
-  end,
-  
-}
+local function ensure_proto(type) -- if entity prototype isn't created, create one
+  if not type.proto then
+    type.proto = {}
+  end
+end
+
+local function get_groupLE(entity) -- get list of entities from group of this entity
+  return __entities[__groups[entity.type.group]]
+end
 
 local function maintain_prototypes(type) -- maintains prototype inheritance
   
@@ -171,15 +106,80 @@ local function maintain_destruction() -- maintain entity destruction if required
   end
 end
 
-local function ensure_proto(type) -- if entity prototype isn't created, create one
-  if not type.proto then
-    type.proto = {}
-  end
-end
-
-local function get_groupLE(entity) -- get list of entities from group of this entity
-  return __entities[__groups[entity.type.group]]
-end
+pplaf.entity = {
+  
+  pewpew_proto = require(pplaf.content .. 'pewpew_proto.lua'),
+  
+  types = {}, -- stores loaded entity types
+  
+  add_group = function(group) -- adds group in entities array
+    entities[group] = {}
+    table.insert(__entities, {})
+    table.insert(__to_destroy, {})
+    table.insert(__groupsL, group)
+    __groups[group] = __group_iter
+    __group_iter = __group_iter + 1
+  end,
+  
+  get_entities = function() -- returns entities array
+    return entities
+  end,
+  
+  get_group = function(group) -- returns certain group array from entities array
+    return entities[group]
+  end,
+  
+  get_groupL = function(group) -- returns certain group array from entities array, possible to iterate through ipairs
+    return __entities[__groups[group]]
+  end,
+  
+  set_type_proto = function(path) -- this prototype will be assigned to every new loaded type
+    pplaf.entity.type_proto = require(path)
+    ensure_proto(pplaf.entity.type_proto)
+    setmetatable(pplaf.entity.type_proto.proto, {__index = pplaf.entity.pewpew_proto})
+  end,
+  
+  -- differences in type loading methods are commented below
+  
+  load_by_typed_dir = function(path, ...) -- load entities from folder; entities are stored in folders with type declared as entity.lua
+    for _, name in ipairs{...} do
+      local folder_path = path .. name .. '/'
+      local file_path = folder_path .. 'entity.lua'
+      pplaf.entity.types[name] = require(file_path)
+      pplaf.entity.types[name].folder_path = folder_path
+      pplaf.entity.types[name].file_path = file_path
+      maintain_prototypes(pplaf.entity.types[name])
+    end
+  end,
+  
+  load_by_typed_files = function(path, ...) -- load entities from folder; entity types are stored in one folder with respective names
+    for _, name in ipairs{...} do
+      local file_path = path .. name .. '.lua'
+      pplaf.entity.types[name] = require(file_path)
+      pplaf.entity.types[name].file_path = file_path
+      maintain_prototypes(pplaf.entity.types[name])
+    end
+  end,
+  
+  create = function(x, y, type, ...) -- create entity in position, with type and pass any parameters to constructor(if it exists)
+    local id = pewpew.new_customizable_entity(x, y)
+    local entity = {
+      id = id,
+      type = pplaf.entity.types[type],
+      is_alive = true,
+      is_exploding = false,
+    }
+    modify_entity(entity, ...) -- set prototype, call constructor, set destruction function, create weapons; if required and possible*
+    store_entity(entity)
+    return entity
+  end,
+  
+  main = function()
+    maintain_ai()
+    maintain_destruction()
+  end,
+  
+}
 
 __DEF_PPLAF_ENTITY_MODIFY = modify_entity
 __DEF_PPLAF_ENTITY_STORE = store_entity
