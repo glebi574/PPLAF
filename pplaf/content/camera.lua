@@ -88,7 +88,7 @@ end
 local function apply_position_modifications() -- camera position modifications
   
   local ma, md, sa, sd = pewpew.get_player_inputs(0) -- get joystick inputs
-  if md then -- movement joystick is used
+  if md ~= 0fx then -- movement joystick is used
     if pplaf.camera.options.movement_offset then -- movement joystick offset set
       local dy, dx = __DEF_FMATH_SINCOS(ma)
       x = x + dx * md * pplaf.camera.options.movement_offset
@@ -98,7 +98,7 @@ local function apply_position_modifications() -- camera position modifications
       z = z + md * pplaf.camera.options.movement_z_offset
     end
   end
-  if sd then -- shooting joystick is used
+  if sd ~= 0fx then -- shooting joystick is used
     if pplaf.camera.options.shooting_offset then -- shooting joystick offset set
       local dy, dx = __DEF_FMATH_SINCOS(sa)
       x = x + dx * sd * pplaf.camera.options.shooting_offset

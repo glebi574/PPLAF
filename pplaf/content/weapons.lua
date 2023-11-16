@@ -1,6 +1,12 @@
 
 -- creates weapons for entities. Basically it just creates arrays and maintains mostly nothing. It devides different parts of entity AI and allows you to use same weapons for different entities tho
 
+local function ensure_proto(type) -- if weapon prototype isn't created, create one
+  if not type.proto then
+    type.proto = {}
+  end
+end
+
 local function maintain_prototypes(type)
 
   ensure_proto(type)
@@ -23,12 +29,6 @@ local function modify_weapon(weapon)
   end
 end
 
-local function ensure_proto(type) -- if weapon prototype isn't created, create one
-  if not type.proto then
-    type.proto = {}
-  end
-end
-
 pplaf.weapons = {
   
   types = {}, -- stores loaded weapon types
@@ -40,22 +40,24 @@ pplaf.weapons = {
   -- similar to entity loading methods; check entity.lua for more info
   
   load_by_typed_dir = function(path, ...) -- load weapons from folder; weapons are stored in folders with type declared as weapon.lua
-    for _, name in pairs({...}) do
-      local folder_path = path .. name .. '/'
+    for _, type_name in pairs({...}) do
+      local folder_path = path .. type_name .. '/'
       local file_path = folder_path .. 'weapon.lua'
-      pplaf.weapons.types[name] = require(file_path)
-      pplaf.weapons.types[name].folder_path = folder_path
-      pplaf.weapons.types[name].file_path = file_path
-      maintain_prototypes(pplaf.weapons.types[name])
+      local weapon_type = require(file_path)
+      weapon_type.folder_path = folder_path
+      weapon_type.file_path = file_path
+      maintain_prototypes(weapon_type)
+      pplaf.weapons.types[type_name] = weapon_type
     end
   end,
   
   load_by_typed_files = function(path, ...) -- load weapons from folder; weapon types are stored in one folder with respective names
-    for _, name in pairs({...}) do
-      local file_path = path .. name .. '.lua'
-      pplaf.weapons.types[name] = require(file_path)
-      pplaf.weapons.types[name].file_path = file_path
-      maintain_prototypes(pplaf.weapons.types[name])
+    for _, type_name in pairs({...}) do
+      local file_path = path .. type_name .. '.lua'
+      local weapon_type = require(file_path)
+      weapon_type.file_path = file_path
+      maintain_prototypes(weapon_type)
+      pplaf.weapons.types[type_name] = weapon_type
     end
   end,
   
@@ -64,7 +66,7 @@ pplaf.weapons = {
     for weapon_index, weapon_type_str in ipairs(entity.type.weapons) do
       local weapon = {
         type = pplaf.weapons.types[weapon_type_str],
-        entity = type
+        entity = entity
       }
       modify_weapon(weapon) -- set prototype and call constructor; if possible*
       weapons[weapon_index] = weapon -- insert weapon

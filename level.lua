@@ -4,8 +4,15 @@ pplaf.init'/dynamic/pplaf/'
 
 pewpew.set_level_size(6000fx, 6000fx)
 
+pplaf.weapons.load_by_typed_files('/dynamic/pplaf/assets/weapons/',
+  'flamethrower'
+)
+
 pplaf.entity.add_group'player'
-pplaf.entity.load_by_typed_files('/dynamic/pplaf/assets/', 'test_player')
+pplaf.entity.load_by_typed_files('/dynamic/pplaf/assets/entities/',
+  'test_player',
+  'flamethrower_projectile'
+)
 pplaf.player.reassign_prototypes('test_player')
 
 local player = pplaf.player.create(0fx, 0fx, 'test_player')

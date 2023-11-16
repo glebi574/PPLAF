@@ -40,21 +40,27 @@ local function modify_entity(entity, ...) -- entity modifications during it's in
   if entity.type.constructor then -- if possible, call constructor
     entity.type.constructor(entity, ...)
   end
+  if entity.type.animation then -- if entity has animation, add specific variables to process it automatically
+    pplaf.animation.modify_entity(entity)
+  end
   if entity.type.weapons then -- if entity has weapons, create them
     pplaf.weapons.create(entity)
   end
-  function entity:destroyA(entity, ...) -- destroyA maintains entity removal and calls destructor if possible
-    if entity.type.destructor then
-      entity.type.destructor(entity, ...)
+  function entity:destroyA(...) -- destroyA maintains entity removal and calls destructor if possible
+    if self.type.destructor then
+      self.type.destructor(self, ...)
     end
-    for weapon_index, weapon in ipairs(entity.weapons) do
+    table.insert(__to_destroy[__groups[self.type.group]], self.__indexP)
+    if not self.weapons then
+      return nil
+    end
+    for weapon_index, weapon in ipairs(self.weapons) do
       if weapon.type.destructor then
         weapon.type.destructor(weapon)
       end
     end
-    table.insert(__to_destroy[__groups[entity.type.group]], entity.__indexP)
   end
-  entity.__indexP = #get_groupLE(entity) -- __indexP is used to identify current position in list of entities
+  entity.__indexP = #get_groupLE(entity) + 1 -- __indexP is used to identify current position in list of entities
 end
 
 local function store_entity(entity) -- store entity in hash table and in list in respective groups
@@ -66,43 +72,50 @@ local function maintain_ai() -- call ai function if possible
   for group_index, group in ipairs(__entities) do
     for entity_index, entity in ipairs(group) do
       if not entity.is_alive or entity.is_exploding then -- if entity isn't alive, don't process it
-        goto l_ma1
+        goto el_ma1
       end
       if entity.type.ai then -- if entity has ai, process it
         entity.type.ai(entity)
       end
+      if entity.animation then
+        pplaf.animation.maintain(entity)
+      end
       if entity.weapons then -- if entity has weapons, process them
         for weapon_index, weapon in ipairs(entity.weapons) do
-          weapon.type.ai()
+          weapon.type.ai(weapon)
         end
       end
-      ::l_ma1::
+      ::el_ma1::
     end
   end
 end
 
 local function maintain_destruction() -- maintain entity destruction if required
-  for group_index, group in ipairs(__to_destroy) do
-    if #group == 0 then -- if there are no entities to destroy, skip
-      goto l_md1
+  for group_index, td_group in ipairs(__to_destroy) do
+    if #td_group == 0 then -- if there are no entities to destroy, skip
+      goto el_md1
     end
-    if #group == #__entities[group_index] then -- if whole array has to be destroyed, destroy it
-      for entity_index, entity in ipairs(group) do
-        entities[entity.id] = nil
-        group[entity_index] = nil
+    if #td_group == #__entities[group_index] then -- if whole array has to be destroyed, destroy it
+      for td_index, entity_index in ipairs(td_group) do
+        entities[__groupsL[group_index]][__entities[group_index][entity_index].id] = nil -- remove entity from hash table
+        __entities[group_index][entity_index] = nil -- remove entity from entities list
       end
-      goto l_md1
+      goto el_md0
     end -- otherwise destroy required entities and replace them with newer entities
-    for entity_index = #__to_destroy[group_index], 1, -1 do
-      entities[entity.id] = nil -- remove entity from hash table
+    for td_index = #__to_destroy[group_index], 1, -1 do
+      local entity_index = td_group[td_index]
+      entities[__groupsL[group_index]][__entities[group_index][entity_index].id] = nil -- remove entity from hash table
       if entity_index == #__entities[group_index] then -- if entity is last in the list, remove it
-        group[entity_index] = nil
+        __entities[group_index][entity_index] = nil
       else -- otherwise replace it with the last one
-        group[entity_index] = group[#group]
-        group[#group] = nil
+        __entities[group_index][#__entities[group_index]].__indexP = __entities[group_index][entity_index].__indexP
+        __entities[group_index][entity_index] = __entities[group_index][#__entities[group_index]]
+        __entities[group_index][#__entities[group_index]] = nil
       end
     end
-    ::l_md1::
+    ::el_md0:: -- clear group and continue
+    __to_destroy[group_index] = {}
+    ::el_md1:: -- group is empty, just continue
   end
 end
 
@@ -142,22 +155,24 @@ pplaf.entity = {
   -- differences in type loading methods are commented below
   
   load_by_typed_dir = function(path, ...) -- load entities from folder; entities are stored in folders with type declared as entity.lua
-    for _, name in ipairs{...} do
-      local folder_path = path .. name .. '/'
+    for _, type_name in ipairs{...} do
+      local folder_path = path .. type_name .. '/'
       local file_path = folder_path .. 'entity.lua'
-      pplaf.entity.types[name] = require(file_path)
-      pplaf.entity.types[name].folder_path = folder_path
-      pplaf.entity.types[name].file_path = file_path
-      maintain_prototypes(pplaf.entity.types[name])
+      local entity_type = require(file_path)
+      entity_type.folder_path = folder_path
+      entity_type.file_path = file_path
+      maintain_prototypes(entity_type)
+      pplaf.entity.types[type_name] = entity_type
     end
   end,
   
   load_by_typed_files = function(path, ...) -- load entities from folder; entity types are stored in one folder with respective names
-    for _, name in ipairs{...} do
-      local file_path = path .. name .. '.lua'
-      pplaf.entity.types[name] = require(file_path)
-      pplaf.entity.types[name].file_path = file_path
-      maintain_prototypes(pplaf.entity.types[name])
+    for _, type_name in ipairs{...} do
+      local file_path = path .. type_name .. '.lua'
+      local entity_type = require(file_path)
+      entity_type.file_path = file_path
+      maintain_prototypes(entity_type)
+      pplaf.entity.types[type_name] = entity_type
     end
   end,
   
@@ -204,6 +219,8 @@ __DEF_PPLAF_ENTITY_STORE = store_entity
       
       ai,                 - entity's ai, called automatically, optional(this way if you don't control it manually it will do nothing)
       
+      animation,          - name of animation type; animation is processed automatically
+      
       weapons,            - array with weapon types, that will be added to entity on its creation, optional(made to simplify ai development by separating ai and weapons of entity; you can ignore this one and separate ai functions however you want)
       
       proto,              - entity prototype; better way, than declaring entity parameters/functions in constructor
@@ -230,8 +247,6 @@ __DEF_PPLAF_ENTITY_STORE = store_entity
   
   
   built-in stuff:
-    
-    animations            - partially presented in previous versions, will add/reimplement later
     
     mesh responses        - mesh changes on certain events; like, changing mesh to certain mesh for several ticks; depending on other modules that can be included, that may require you to create different animated meshes to use certain features of this
     

@@ -1,6 +1,6 @@
 {
   "name":"PPLAF",
-  "descriptions":["1.1"],
+  "descriptions":["1.0"],
   "information": "Template",
   "entry_point":"level.lua",
   "has_score_leaderboard":false
