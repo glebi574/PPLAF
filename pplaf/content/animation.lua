@@ -3,11 +3,8 @@
 
 local function modify_animation_type(animation_type)
   local frame_offset = 0
-  if animation_type.s_skip_angle_interpolation then
-    frame_offset = 1
-    if animation_type.s_skip_angle_interpolation_add_offset then
-      frame_offset = frame_offset - animation_type.frames_per_tick * 2
-    end
+  if animation_type.s_skip_angle_interpolation_add_offset then
+    frame_offset = -animation_type.frames_per_tick * 2
   end
   animation_type.frame_offset = frame_offset
   if not animation_type.variation_amount then
@@ -54,7 +51,6 @@ pplaf.animation = {
     for animation_type_name, animation_type in pairs(pplaf.animation.types) do
       if     animation_type.template == 0 then
         pewpew.customizable_entity_set_mesh(id, animation_type.path, 0)
-        goto al_pa1
       elseif animation_type.template == 1 then
         for i = 1, animation_type.variation_amount do
           pewpew.customizable_entity_set_mesh(id, animation_type.path .. i .. '.lua', 0)
@@ -68,10 +64,6 @@ pplaf.animation = {
           pewpew.customizable_entity_set_mesh(id, animation_type.path .. i .. '.lua', 0)
         end
       end
-      if animation_type.s_skip_angle_interpolation then
-        pewpew.customizable_entity_set_mesh(id, animation_type.path .. '0.lua', 0)
-      end
-      ::al_pa1::
     end
   end,
   
@@ -91,56 +83,35 @@ pplaf.animation = {
     local animation = entity.animation
     local animation_type = animation.type
     
-    if animation_type.template == 0 then -- SF animation
+    local path = 0
+    local frame = 0
     
-      if animation_type.s_skip_angle_interpolation and animation.frame <= animation_type.frames_per_tick then -- skip angle interpolation if required
-        entity:set_mesh(animation_type.path, 0)
-        goto al_m0
-      end
+    if animation_type.s_skip_angle_interpolation and animation.frame <= animation_type.frames_per_tick then -- skip angle interpolation if required
+      goto al_m0
+    end
+    
+    if     animation_type.template == 0 then -- SF animation
+      path = animation_type.path
+      frame = animation.variation_offset + animation.frame + animation_type.frame_offset
+    elseif animation_type.template == 1 then -- MF animation
+      path = animation_type.path .. animation.variation_index + 1 .. '.lua'
+      frame = animation.frame + animation_type.frame_offset
       
-      local frame = animation.variation_offset + animation.frame + animation_type.frame_offset
+    elseif animation_type.template == 2 then
+      path = animation_type.path .. animation.frame + animation_type.frame_offset + 1 .. '.lua'
       if animation_type.frames_per_tick == 1 then
-        entity:set_mesh(animation_type.path, frame)
+        frame = animation.variation_index
       else
-        entity:set_flipping_meshes(animation_type.path, frame, frame + 1)
+        frame = animation.variation_index * 2 -- OwO
       end
-      
-    else -- MF animation
+    elseif animation_type.template == 3 then
+      path = animation_type.path .. animation.variation_offset + animation.frame + animation_type.frame_offset + 1 .. '.lua'
+    end
     
-      if animation_type.s_skip_angle_interpolation and animation.frame <= animation_type.frames_per_tick then -- skip angle interpolation if required
-        entity:set_mesh(animation_type.path .. '0.lua', 0)
-        goto al_m0
-      end
-      
-      if     animation_type.template == 1 then
-        
-        local frame_path = animation_type.path .. animation.variation_index + 1 .. '.lua'
-        if animation_type.frames_per_tick == 1 then
-          entity:set_mesh(frame_path, animation.frame)
-        else
-          entity:set_flipping_meshes(frame_path, animation.frame, animation.frame + 1)
-        end
-        
-      elseif animation_type.template == 2 then
-        
-        local frame_path = animation_type.path .. animation.frame + 1 .. '.lua'
-        if animation_type.frames_per_tick == 1 then
-          entity:set_mesh(frame_path, animation.variation_index)
-        else
-          entity:set_flipping_meshes(frame_path, animation.variation_index * 2, animation.variation_index * 2 + 1) -- OwO
-        end
-        
-      elseif animation_type.template == 3 then
-        
-        local frame_path = animation_type.path .. animation.variation_offset + animation.frame + animation_type.frame_offset + 1 .. '.lua'
-        if animation_type.frames_per_tick == 1 then
-          entity:set_mesh(frame_path, 0)
-        else
-          entity:set_flipping_meshes(frame_path, 0, 1)
-        end
-        
-      end
-      
+    if animation_type.frames_per_tick == 1 then
+      entity:set_mesh(path, frame)
+    else
+      entity:set_flipping_meshes(path, frame, frame + 1)
     end
     
     ::al_m0::
@@ -170,10 +141,8 @@ pplaf.animation = {
     
     -- next is list of different settings
     
-    s_skip_angle_interpolation - if true, first 2 ticks will be replaced with frame 0 or 0.lua mesh
+    s_skip_angle_interpolation - if true, first 2 ticks will be skipped
     s_skip_angle_interpolation_add_offset - after first 2 ticks animation will start from tick 0 instead of tick 2
-    
-    -- if you're using MF animation and want to skip angle interpolation, add 0.lua file with empty mesh
     
     --TBD
     s_loop - if true, next 4 settings will be used to create loop
@@ -183,6 +152,8 @@ pplaf.animation = {
     s_loop_last_index
     
     -- next is list of variables created automatically and used by animation framework
+    
+    frame_offset        - offset, calculating depending on settings
   
   
   animation:

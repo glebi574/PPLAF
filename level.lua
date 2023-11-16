@@ -4,6 +4,11 @@ pplaf.init'/dynamic/pplaf/'
 
 pewpew.set_level_size(6000fx, 6000fx)
 
+pplaf.animation.load_by_typed_files('/dynamic/pplaf/assets/animations/',
+  'flamethrower'
+)
+pplaf.animation.preload_all()
+
 pplaf.weapons.load_by_typed_files('/dynamic/pplaf/assets/weapons/',
   'flamethrower'
 )

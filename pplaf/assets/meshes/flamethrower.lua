@@ -1,8 +1,6 @@
 
 meshes = {}
 
-table.insert(meshes, {vertexes = {}, segments = {}})
-
 a = 0.75
 b = 2
 
@@ -14,10 +12,12 @@ particle_mesh = {
 
 particles = {}
 
-variation_amount = 8
+param = require'/dynamic/pplaf/assets/animations/flamethrower.lua'
+
+variation_amount = param.variation_amount
 particle_amount = 32
 spread_angle = 0.36
-time = 90
+time = param.frame_amount
 min_speed = 12
 max_speed = 20
 max_rva = 0.08
