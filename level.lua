@@ -1,31 +1,38 @@
 
-require'/dynamic/pplaf/pplaf.lua'
+require'/dynamic/pplaf/main.lua'
 pplaf.init'/dynamic/pplaf/'
 
-pplaf.animation.load_folder('/dynamic/assets/', '30_10_t')
+pewpew.set_level_size(6000fx, 6000fx)
 
-local player = pplaf.player.create(START_POS_X, START_POS_Y)
+pplaf.animation.load_by_typed_files('/dynamic/pplaf/assets/animations/',
+  'flamethrower'
+)
+pplaf.animation.preload_all()
 
-new_string(1000fx, 1200fx, 'Configure dynamic heigth')
+pplaf.weapons.load_by_typed_files('/dynamic/pplaf/assets/weapons/',
+  'flamethrower'
+)
 
-local s1 = pplaf.switch.create({{930fx, 1100fx, 980fx, 1150fx}, {1020fx, 1100fx, 1070fx, 1150fx}}, '/dynamic/assets/trigger_meshes/')
+pplaf.entity.add_group'player'
+pplaf.entity.load_by_typed_files('/dynamic/pplaf/assets/entities/',
+  'test_player',
+  'flamethrower_projectile'
+)
+pplaf.player.reassign_prototypes('test_player')
 
---pewpew.configure_player_hud(0, {top_left_line = "0.8 Changes: switches with any amount of triggers, redesigned types system."})
+local player = pplaf.player.create(0fx, 0fx, 'test_player')
 
-local t
+local __c_pi_d2 = PI_FX / 2fx -- pi / 2
+local function ease_function(v) -- https://www.desmos.com/calculator/ewmoeap5jt
+  return __DEF_FMATH_SINCOS(v * __c_pi_d2)
+end
 
-local id = pewpew.new_customizable_entity(START_POS_X + 1000fx, START_POS_Y)
-pplaf.animation.create(id, '30_10_t')
+pplaf.camera.configure{
+  following_param = player.id,
+  ease_function = ease_function
+}
 
 pewpew.add_update_callback(function()
-	if GAME_STATE then
-		
-		pplaf.main()
-		
-		t = s1:get(pewpew.entity_get_position(player.id))
-		if t then
-			pplaf.camera.configure({dynamic_heigth = not pplaf.camera.options.dynamic_heigth})
-		end
-		
-	end
+  pplaf.entity.main()
+  pplaf.camera.main()
 end)

@@ -1,1 +1,0 @@
-return {frame_amount = 30, file_amount = 30, frames_per_file = 1}

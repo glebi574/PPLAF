@@ -1,7 +1,7 @@
 {
-  "name":"PPLAF 0.8",
-  "descriptions":["#ff3333ffError"],
-  "information":"#99ff33ffPPLAF #ffffffffis a set of tools, made to simplify entity development and level development in general.",
+  "name":"PPLAF",
+  "descriptions":["1.0"],
+  "information": "Template",
   "entry_point":"level.lua",
   "has_score_leaderboard":false
 }
