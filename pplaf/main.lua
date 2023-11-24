@@ -14,6 +14,7 @@ _ENV.fmath_old = nil
 
 pplaf = {
   
+  version = 100, -- current pplaf vversion(maybe will be used for compatibility purposes)
   path = '', -- pplaf folder path
   content = '', -- pplaf content folder path
   assets = '', -- pplaf assets folder path
