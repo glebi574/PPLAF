@@ -25,7 +25,7 @@ end
 local function modify_weapon(weapon)
   setmetatable(weapon, {__index = weapon.type.proto})
   if weapon.type.constructor then
-    weapon.type.constructor()
+    weapon.type.constructor(weapon)
   end
 end
 

@@ -10,6 +10,9 @@ local function modify_animation_type(animation_type)
   if not animation_type.frame_offset then
     animation_type.frame_offset = 0
   end
+  for _, action_table in ipairs(animation_type.actions) do
+    action_table[1] = action_list[action_table[1]] or action_table[1] -- get corresponding index if needed
+  end
 end
 
 local function go_to_next_action(animation, animation_type)
@@ -24,10 +27,6 @@ local function action_wait_base(animation, animation_type)
   else
     animation.action_param[2] = timer - 1
   end
-end
-
-local function get_action_enum(action_type) -- return corresponding index if input is name, or input itself if it's index
-  return action_list[action_type] or action_type
 end
 
 pplaf.animation = {
@@ -143,7 +142,7 @@ pplaf.animation = {
     local template = animation_type.template
     local current_action = animation_type.actions[animation.action]
     local current_action_param = animation.action_param
-    local action_type = get_action_enum(current_action[1])
+    local action_type = current_action[1]
     
     local modify_frame = 0 -- 0 - don't modify, 1 - increment, 2 - decrement
     local path = 0
@@ -247,7 +246,7 @@ pplaf.animation = {
     else
       if modify_frame == 1 then
         entity:set_flipping_meshes(path, frame, frame + 1)
-      else
+      elseif modify_frame == 2 then
         entity:set_flipping_meshes(path, frame + 1, frame) -- we're decrementing frames, so we should use corresponding frames
       end
     end
