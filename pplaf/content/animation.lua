@@ -16,11 +16,15 @@ end
 
 local function action_wait_base(animation, animation_type)
   local timer = animation.action_param[2]
-  if timer == 1 then
+  if timer <= 1 then
     go_to_next_action(animation, animation_type)
   else
     animation.action_param[2] = timer - 1
   end
+end
+
+local function get_action_enum(action_type) -- return corresponding index if input is name, or input itself if it's index
+  return action_list[action_type] or action_type
 end
 
 pplaf.animation = {
@@ -32,7 +36,9 @@ pplaf.animation = {
     mf_variated_frame = 3, -- every animation file contains 1 frame of 1 variation; A * B files
   },
   
-  types = {
+  types = {},
+  
+  actions = {
     wait = 100,
     wait_and_increment = 101,
     wait_and_decrement = 102,
@@ -70,25 +76,48 @@ pplaf.animation = {
   end,
   
   preload_all = function() -- preloads all meshes to avoid lag/delay on 1st mesh load
-    local id = pewpew.new_customizable_entity(1000000fx, 1000000fx)
-    pewpew.customizable_entity_set_visibility_radius(id, 0fx)
+    local id = pewpew.new_customizable_entity(-100000fx, -100000fx) -- create temporary entity
+    local animation_type_list = {} -- create list to iterate
     for animation_type_name, animation_type in pairs(pplaf.animation.types) do
+      table.insert(animation_type_list, animation_type)
+    end
+    local type_state = 1
+    local sub_state = 1
+    local lifetime = 1
+    pewpew.entity_set_update_callback(id, function(id)
+      if lifetime == 0 then
+        pewpew.entity_destroy(id)
+        return nil
+      end
+      local animation_type = animation_type_list[type_state]
       if     animation_type.template == 0 then
         pewpew.customizable_entity_set_mesh(id, animation_type.path, 0)
       elseif animation_type.template == 1 then
-        for i = 1, animation_type.variation_amount do
-          pewpew.customizable_entity_set_mesh(id, animation_type.path .. i .. '.lua', 0)
+        if sub_state > animation_type.variation_amount then
+          sub_state = 1
         end
+        pewpew.customizable_entity_set_mesh(id, animation_type.path .. sub_state .. '.lua', 0)
+        sub_state = sub_state + 1
       elseif animation_type.template == 2 then
-        for i = 1, animation_type.frame_amount do
-          pewpew.customizable_entity_set_mesh(id, animation_type.path .. i .. '.lua', 0)
+        pewpew.customizable_entity_set_mesh(id, animation_type.path .. sub_state .. '.lua', 0)
+        sub_state = sub_state + 1
+        if sub_state > animation_type.frame_amount then
+          sub_state = 1
         end
       elseif animation_type.template == 3 then
-        for i = 1, animation_type.variation_amount * animation_type.frame_amount do
-          pewpew.customizable_entity_set_mesh(id, animation_type.path .. i .. '.lua', 0)
+        pewpew.customizable_entity_set_mesh(id, animation_type.path .. sub_state .. '.lua', 0)
+        sub_state = sub_state + 1
+        if sub_state > animation_type.variation_amount * animation_type.frame_amount then
+          sub_state = 1
         end
       end
-    end
+      if sub_state == 1 then
+        type_state = type_state + 1
+      end
+      if type_state > #animation_type_list then
+        lifetime = 0
+      end
+    end)
   end,
   
   modify_entity = function(entity) -- adds animation table in entity
@@ -111,7 +140,7 @@ pplaf.animation = {
     local template = animation_type.template
     local current_action = animation_type.actions[animation.action]
     local current_action_param = animation.action_param
-    local action_type = current_action[1]
+    local action_type = get_action_enum(current_action[1])
     
     local modify_frame = 0 -- 0 - don't modify, 1 - increment, 2 - decrement
     local path = 0

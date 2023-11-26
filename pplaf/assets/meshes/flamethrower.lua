@@ -1,13 +1,19 @@
 
 meshes = {}
 
-a = 0.75
-b = 2
+a = 5
+b = 10
+
+c = a / 2
+d = a * math.sqrt(3) / 2
+q = d / 3
+w = q * 2
+u = b / a
 
 particle_mesh = {
-  vertexes = {{-a, -a}, {-a, a}, {a, a}, {a, -a},
-              {-b, -b}, {-b, b}, {b, b}, {b, -b}},
-  segments = {{0, 1, 2, 3, 0}, {4, 5, 6, 7, 4}}
+  vertexes = {{-q, c}, {-q, -c}, {w, 0},
+              {-q * u, c * u}, {-q * u, -c * u}, {w * u, 0}},
+  segments = {{0, 1, 2, 0}, {3, 4, 5, 3}}
 }
 
 particles = {}
@@ -15,15 +21,24 @@ particles = {}
 param = require'/dynamic/pplaf/assets/animations/flamethrower.lua'
 
 variation_amount = param.variation_amount
-particle_amount = 32
-spread_angle = 0.36
 time = param.frame_amount
-min_speed = 12
-max_speed = 20
-max_rva = 0.08
-max_ra = 0.12
-min_speed_ratio = 0.88
-max_speed_ratio = 0.97
+
+particle_amount = param.particle_amount
+
+min_spread_angle = param.min_spread_angle
+max_spread_angle = param.max_spread_angle
+
+rotation = param.rotation
+
+min_speed = param.min_speed
+max_speed = param.max_speed
+
+max_random_speed = param.max_random_speed
+max_random_v_angle = param.max_random_v_angle
+max_v_angle_offset = param.max_v_angle_offset
+
+min_speed_ratio = param.min_speed_ratio
+max_speed_ratio = param.max_speed_ratio
 
 rgba_start  = {255, 255, 128, 255}
 rgba_end    = {255, 0, 0, 0 }
@@ -49,17 +64,21 @@ end
 
 for f = 1, variation_amount do
   
+  local spread_angle = min_spread_angle + math.random() * (max_spread_angle - min_spread_angle)
+  
   particles = {}
   for p = 1, particle_amount do
-    local vp = math.random(0, 1) * 2 - 1
-    local v_angle = math.random() * spread_angle
+    local sign = math.random(0, 1) * 2 - 1
+    local v_angle = (math.random() * 2 - 1) * spread_angle
     local particle = {
       x = 0,
       y = 0,
       v_speed = min_speed + math.random() * (max_speed - min_speed),
       v_angle = v_angle,
       angle = 0,
-      vp = vp,
+      sign = sign,
+      min_v_angle = -v_angle - max_v_angle_offset,
+      max_v_angle = v_angle + max_v_angle_offset,
     }
     table.insert(particles, particle)
   end
@@ -68,9 +87,10 @@ for f = 1, variation_amount do
     local mesh = {vertexes = {}, segments = {}, colors = {}}
     local index = 0
     for _, particle in ipairs(particles) do
-      particle.angle = particle.angle + max_ra * particle.vp
-      particle.v_angle = particle.v_angle + (math.random() * 2 - 1) * max_rva
-      --particle.v_speed = particle.v_speed + (math.random() * 2 - 1) * max_rvs
+      
+      particle.angle = particle.angle + rotation * particle.sign
+      particle.v_angle = particle.v_angle * (1 - i / time * 0.1)
+      
       local x = particle.x
       local y = particle.y
       for _, vertex in ipairs(particle_mesh.vertexes) do
@@ -92,7 +112,6 @@ for f = 1, variation_amount do
       end
       particle.x = x + particle.v_speed * math.cos(particle.v_angle)
       particle.y = y + particle.v_speed * math.sin(particle.v_angle)
-      particle.v_speed = particle.v_speed * (min_speed_ratio + math.random() * (max_speed_ratio - min_speed_ratio))
       index = index + index_offset
     end
     table.insert(meshes, mesh)
