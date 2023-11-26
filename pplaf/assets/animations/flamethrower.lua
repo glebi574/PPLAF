@@ -5,6 +5,7 @@ return {
   
   template = 0,
   frames_per_tick = 2,
+  frame_offset = 0,
   variation_amount = 10,
   frame_amount = frame_amount,
   path = '/dynamic/pplaf/assets/meshes/flamethrower.lua',

@@ -6,7 +6,10 @@ local action_list = {}
 local function modify_animation_type(animation_type)
   if not animation_type.variation_amount then
     animation_type.variation_amount = 1
-  end 
+  end
+  if not animation_type.frame_offset then
+    animation_type.frame_offset = 0
+  end
 end
 
 local function go_to_next_action(animation, animation_type)
@@ -32,7 +35,7 @@ pplaf.animation = {
   template = {
     sf = 0, -- animation is stored in 1 file
     mf_variation = 1, -- every animation file contains 1 variation with B frames; A files
-    mf_frame = 2,  -- every animation file contains 1 frame of A variations; B files
+    mf_frame = 2, -- every animation file contains 1 frame of A variations(you store additional frames after animated frames); B files
     mf_variated_frame = 3, -- every animation file contains 1 frame of 1 variation; A * B files
   },
   
@@ -226,20 +229,16 @@ pplaf.animation = {
       animation.frame = current_action_param[2]
     end
     
-    if     template == 0 then -- SF animation
+    if     template == 0 then -- animation is stored in 1 file; file contains A variation stored in order; every variation contains B frames
       path = animation_type.path
       frame = animation.variation_offset + animation.frame
-    elseif template == 1 then -- MF animation
+    elseif template == 1 then -- every animation file contains 1 variation with B frames; A files
       path = animation_type.path .. animation.variation_index + 1 .. '.lua'
       frame = animation.frame
-    elseif template == 2 then
+    elseif template == 2 then -- every animation file contains 1 frame of A variations(you store additional frames after animated frames); B files
       path = animation_type.path .. animation.frame + animation_type.frame_offset + 1 .. '.lua'
-      if animation_type.frames_per_tick == 1 then
-        frame = animation.variation_index
-      else
-        frame = animation.variation_index * 2 -- OwO
-      end
-    elseif template == 3 then
+      frame = animation.variation_index * (animation_type.frames_per_tick + animation_type.frame_offset) -- OwO
+    elseif template == 3 then -- every animation file contains 1 frame of 1 variation; A * B files
       path = animation_type.path .. animation.variation_offset + animation.frame + animation_type.frame_offset + 1 .. '.lua'
     end
     
@@ -255,9 +254,9 @@ pplaf.animation = {
     
     ::al_mmf::
     if modify_frame == 1 then
-      animation.frame = animation.frame + animation_type.frames_per_tick
+      animation.frame = animation.frame + animation_type.frames_per_tick + animation_type.frame_offset
     elseif modify_frame == 2 then
-      animation.frame = animation.frame - animation_type.frames_per_tick
+      animation.frame = animation.frame - animation_type.frames_per_tick - animation_type.frame_offset
     end
     ::al_me::
   end,
@@ -283,33 +282,11 @@ action_list = pplaf.animation.actions
     
     variation_amount    - amount of different variations of mesh; if not presented, it will be automatically set to 1; animation is chosen randomly between variations
     
-    frame_amount        - amount of frames
+    frame_amount        - amount of frames in every variation
     
-    -- old {{{{
+    actions             - sequence of actions
     
-    -- next is list of different settings
-    
-    s_skip_angle_interpolation - if true, first 2 ticks will be skipped
-    s_skip_angle_interpolation_add_offset - after first 2 ticks animation will start from tick 0 instead of tick 2
-    
-    --TBD
-    s_loop - if true, next 4 settings will be used to create loop
-    s_loop_intro_first_index - first and last indexes of animation, that will be played before start of the loop
-    s_loop_intro_last_index - if these aren't presented, loop will start
-    s_loop_first_index - first and last indexes of the loop
-    s_loop_last_index
-    
-    }}}}
-    
-    -- new {{{{
-    
-    sequnce             - sequence of actions
-    
-    }}}}
-    
-    -- next is list of variables created automatically and used by animation framework
-    
-    frame_offset        - offset, automatically calculated depending on settings
+    frame_offset        - additional frame offset; this allows you to store multiple variations of frame that you will use manually for damaged frames, invulnerable frames, etc.
   
   
   animation:
@@ -327,9 +304,21 @@ action_list = pplaf.animation.actions
   
   
   
-  sequence of actions:
+  frame_offset:
+    
+    1 frame per tick, 0 frame offset:
+      { 1 | 2 | 3 | 4 } - 30 fps, no additional frames, every frame is animated
+    
+    2 frames per ticks, 0 frame offset:
+      { 1 2 | 3 4 | 5 6 | 7 8 | } - 60 fps, no additional frames, every second frame(starting from first frame) is animated with every frame after it being used for 60 fps animation
+    
+    1 frame per tick, 1 frame offset:
+      { 1 2 | 3 4 | 5 6 | 7 8 | } - 30 fps, 1 additional frame, every second frame(starting from first) is animated; 1 additional frame is stored to be used manually after it
+    
+    2 frames per tick, 1 frame offset:
+      { 1 2 3 | 4 5 6 | 7 8 9 | 10 11 12 } - 60 fps, 1 additional frame, every third frame(starting from first) is animated with every frame after it being used for 60 fps animation; 1 additional frame is stored to be used manually after them
   
-    table, containing action and parameters: {pplaf.animation.actions.wait, 2}
+  
   
   actions:
     
