@@ -19,7 +19,6 @@ pplaf.player = {
       is_alive = true,
     }
     __DEF_PPLAF_ENTITY_MODIFY(player, ...)
-    setmetatable(player, {__index = pplaf.player.pewpew_proto})
     __DEF_PPLAF_ENTITY_STORE(player)
     return player
   end,
