@@ -246,6 +246,13 @@ pplaf.camera = {
     for setting, value in pairs(options) do
       pplaf.camera.options[setting] = value
     end
+    if not options.following_type then
+      return nil
+    end
+    local following_type_index = pplaf.camera.following_types[options.following_type] -- if input is type name, it will be replaced with corresponding index
+    if following_type_index then
+      pplaf.camera.options.following_type = following_type_index
+    end
   end,
   
   main = function() -- camera position calculations
