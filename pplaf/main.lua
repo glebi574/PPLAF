@@ -41,8 +41,7 @@ pplaf = {
       'weapons',
       'entity',
       'player',
-      'camera',
-      'wall'
+      'camera'
     )
   end,
   

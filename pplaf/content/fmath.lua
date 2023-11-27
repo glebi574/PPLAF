@@ -51,6 +51,17 @@ pplaf.fmath = {
       local a, b = args[3] - args[1], args[4] - args[2]
       return __DEF_FMATH_SQRT(a * a + b * b)
     end
-  end
+  end,
+  
+  sqlen = function(...) -- squared length
+    local args = {...}
+    if #args == 2 then -- dx, dy
+      return args[1] * args[1] + args[2] * args[2]
+    end
+    if #args == 4 then -- x1, y1, x2, y2
+      local a, b = args[3] - args[1], args[4] - args[2]
+      return a * a + b * b
+    end
+  end,
   
 }

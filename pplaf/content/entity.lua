@@ -43,6 +43,10 @@ local function modify_entity(entity, ...) -- entity modifications during it's in
   if entity.type.animation then -- if entity has animation, add specific variables to process it automatically
     pplaf.animation.modify_entity(entity)
   end
+  if entity.override_animation_variation then -- if override_animation_variation isn't nil, variation_index and corresponding offset will be overriden
+    entity.animation.variation_index = entity.override_animation_variation
+    entity.animation.variation_offset = entity.override_animation_variation * animation.type.frame_amount
+  end
   if entity.type.weapons then -- if entity has weapons, create them
     pplaf.weapons.create(entity)
   end
