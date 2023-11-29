@@ -38,7 +38,6 @@ pplaf = {
       'math',
       'fmath',
       'animation',
-      'weapons',
       'entity',
       'player',
       'camera'

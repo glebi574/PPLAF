@@ -25,7 +25,6 @@ function proto:set_update_callback(callback)
 	return pewpew.entity_set_update_callback(self.id, callback)
 end
 function proto:destroy()
-  self.is_alive = false
 	return pewpew.entity_destroy(self.id)
 end
 function proto:set_position_interpolation(b)
@@ -83,8 +82,6 @@ function proto:start_spawning(time)
 	return pewpew.customizable_entity_start_spawning(self.id, time)
 end
 function proto:start_exploding(time)
-  self.is_alive = false
-  self.is_exploding = true
 	return pewpew.customizable_entity_start_exploding(self.id, time)
 end
 

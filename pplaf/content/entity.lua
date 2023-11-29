@@ -47,22 +47,11 @@ local function modify_entity(entity, ...) -- entity modifications during it's in
     entity.animation.variation_index = entity.override_animation_variation
     entity.animation.variation_offset = entity.override_animation_variation * animation.type.frame_amount
   end
-  if entity.type.weapons then -- if entity has weapons, create them
-    pplaf.weapons.create(entity)
-  end
   function entity:destroyA(...) -- destroyA maintains entity removal and calls destructor if possible
     if self.type.destructor then
       self.type.destructor(self, ...)
     end
     table.insert(__to_destroy[__groups[self.type.group]], self.__indexP)
-    if not self.weapons then
-      return nil
-    end
-    for weapon_index, weapon in ipairs(self.weapons) do
-      if weapon.type.destructor then
-        weapon.type.destructor(weapon)
-      end
-    end
   end
   entity.__indexP = #get_groupLE(entity) + 1 -- __indexP is used to identify current position in list of entities
 end
@@ -75,19 +64,18 @@ end
 local function maintain_ai() -- call ai function if possible
   for group_index, group in ipairs(__entities) do
     for entity_index, entity in ipairs(group) do
-      if not entity.is_alive or entity.is_exploding then -- if entity isn't alive, don't process it
+      if not entity:get_is_alive() then -- if entity isn't alive, don't process it
         goto el_ma1
       end
-      if entity.type.ai then -- if entity has ai, process it
+      if entity.is_spawning and entity.type.on_spawn then
+        entity.type.on_spawn(entity)
+      elseif entity:get_is_started_to_be_destroyed() and entity.type.on_explode then
+        entity.type.on_explode(entity)
+      elseif entity.type.ai then -- if entity has ai, process it
         entity.type.ai(entity)
       end
       if entity.animation then
         pplaf.animation.maintain(entity)
-      end
-      if entity.weapons then -- if entity has weapons, process them
-        for weapon_index, weapon in ipairs(entity.weapons) do
-          weapon.type.ai(weapon)
-        end
       end
       ::el_ma1::
     end
@@ -182,13 +170,12 @@ pplaf.entity = {
   
   create = function(x, y, type, ...) -- create entity in position, with type and pass any parameters to constructor(if it exists)
     local id = pewpew.new_customizable_entity(x, y)
+    local entity_type = pplaf.entity.types[type]
     local entity = {
       id = id,
-      type = pplaf.entity.types[type],
-      is_alive = true,
-      is_exploding = false,
+      type = entity_type,
     }
-    modify_entity(entity, ...) -- set prototype, call constructor, set destruction function, create weapons; if required and possible*
+    modify_entity(entity, ...) -- set prototype, call constructor, set destruction function; if required and possible*
     store_entity(entity)
     return entity
   end,
@@ -221,11 +208,13 @@ __DEF_PPLAF_ENTITY_STORE = store_entity
       
       destructor,         - called any time you destroy entity, optional(entity isn't automatically destroyed, only removed from entities table); additional args upon destruction can be passed to destructor function
       
+      on_spawn            - called automatically if exists and entity.is_spawning is true; overrides on_explode and ai calls
+      
+      on_explode          - called automatically if exists and entity is exploding; overrides ai call
+      
       ai,                 - entity's ai, called automatically, optional(this way if you don't control it manually it will do nothing)
       
       animation,          - name of animation type; animation is processed automatically
-      
-      weapons,            - array with weapon types, that will be added to entity on its creation, optional(made to simplify ai development by separating ai and weapons of entity; you can ignore this one and separate ai functions however you want)
       
       proto,              - entity prototype; better way, than declaring entity parameters/functions in constructor
       
@@ -239,8 +228,6 @@ __DEF_PPLAF_ENTITY_STORE = store_entity
       type,               - type of this entity(table)
       
       id,                 - pewpew id
-      
-      weapons,            - weapons, defined earlier; they are processed automatically, but if needed you can modify them or vice versa
       
       variable_n,         - whatever you want: hp, damage, counters, etc.; I usually define those in constructor
       
@@ -265,7 +252,6 @@ __DEF_PPLAF_ENTITY_STORE = store_entity
     folder/
       entity1/
         entity.lua
-        weapon.lua
         mesh.lua
         animation.lua
         sounds.lua
@@ -286,8 +272,8 @@ __DEF_PPLAF_ENTITY_STORE = store_entity
       entity2.lua
       ...
     other_folder/
-      weapon1.lua
-      weapon2.lua
+      animation1.lua
+      animation2.lua
       ...
     ...
     

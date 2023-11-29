@@ -14,6 +14,4 @@ pplaf.settings = {
   
   override_entity_prototype = false,      -- type's entity prototype overrides type prototype's entity prototype instead of expanding it
   
-  override_weapon_prototype = false,      -- type's weapon prototype overrides type prototype's weapon prototype instead of expanding it
-  
 }

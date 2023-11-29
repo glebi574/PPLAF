@@ -9,10 +9,6 @@ pplaf.animation.load_by_typed_files('/dynamic/pplaf/assets/animations/',
 )
 pplaf.animation.preload_all()
 
-pplaf.weapons.load_by_typed_files('/dynamic/pplaf/assets/weapons/',
-  'flamethrower'
-)
-
 pplaf.entity.add_group'player'
 pplaf.entity.load_by_typed_files('/dynamic/pplaf/assets/entities/',
   'test_player',
