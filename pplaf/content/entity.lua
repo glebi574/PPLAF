@@ -67,11 +67,7 @@ local function maintain_ai() -- call ai function if possible
       if not entity:get_is_alive() then -- if entity isn't alive, don't process it
         goto el_ma1
       end
-      if entity.is_spawning and entity.type.on_spawn then
-        entity.type.on_spawn(entity)
-      elseif entity:get_is_started_to_be_destroyed() and entity.type.on_explode then
-        entity.type.on_explode(entity)
-      elseif entity.type.ai then -- if entity has ai, process it
+      if entity.type.ai then -- if entity has ai, process it
         entity.type.ai(entity)
       end
       if entity.animation then
@@ -207,10 +203,6 @@ __DEF_PPLAF_ENTITY_STORE = store_entity
       constructor,        - called any time you create entity of this type, optional(you want to add it tho); additional args upon creation can be passed to constructor function
       
       destructor,         - called any time you destroy entity, optional(entity isn't automatically destroyed, only removed from entities table); additional args upon destruction can be passed to destructor function
-      
-      on_spawn            - called automatically if exists and entity.is_spawning is true; overrides on_explode and ai calls
-      
-      on_explode          - called automatically if exists and entity is exploding; overrides ai call
       
       ai,                 - entity's ai, called automatically, optional(this way if you don't control it manually it will do nothing)
       
