@@ -124,16 +124,17 @@ pplaf.animation = {
   
   modify_entity = function(entity) -- adds animation table in entity
     local animation_type = pplaf.animation.types[entity.type.animation]
-    local variation_index = pplaf.math.random(1, animation_type.variation_amount) - 1
-    local animation = {
+    entity.animation = {
       type = animation_type,
       frame = 0,
       action = 1,
       action_param = table.copy(animation_type.actions[1]),
-      variation_index = variation_index,
-      variation_offset = variation_index * animation_type.frame_amount,
     }
-    entity.animation = animation
+    function entity:set_animation_variation(index)
+      self.animation.variation_index = index
+      self.animation.variation_offset = index * self.animation.type.frame_amount
+    end
+    entity:set_animation_variation(0)
   end,
   
   maintain = function(entity) -- maintains entity's animation

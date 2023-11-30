@@ -39,7 +39,6 @@ pplaf = {
       'fmath',
       'animation',
       'entity',
-      'player',
       'camera'
     )
   end,

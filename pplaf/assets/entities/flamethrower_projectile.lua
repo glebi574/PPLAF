@@ -9,11 +9,13 @@ return {
     lifetime = 0
   },
   
-  constructor = function(entity, ...)
+  constructor = function(entity, x, y, ...)
     local args = {...}
     local angle = args[1]
     
-    entity.lifetime = pplaf.animation.types.flamethrower.frame_amount / 2
+    entity.id = pewpew.new_customizable_entity(x, y)
+    entity.lifetime = entity.animation.type.frame_amount / 2
+    entity:set_animation_variation(pplaf.math.random(0, entity.animation.type.variation_amount - 1))
     
     entity:start_spawning(0)
     entity:set_position_interpolation(true)

@@ -14,9 +14,10 @@ pplaf.entity.load_by_typed_files('/dynamic/pplaf/assets/entities/',
   'test_player',
   'flamethrower_projectile'
 )
-pplaf.player.reassign_prototypes('test_player')
 
-local player = pplaf.player.create(0fx, 0fx, 'test_player')
+pplaf.entity.def_types_globally()
+
+local player = test_player:create(0fx, 0fx)
 
 local __c_pi_d2 = PI_FX / 2fx -- pi / 2
 local function ease_function(v) -- https://www.desmos.com/calculator/ewmoeap5jt

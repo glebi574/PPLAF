@@ -1,13 +1,12 @@
 
 -- maintains stuff related to entities, so you don't have to. Simplifies custom entity development
 
-local entities = {} -- entities, stored in their respective groups
-local __entities = {} -- entities table, used to actually maintain entities
+local __entities = {} -- entities table, used to maintain entities
 local __to_destroy = {} -- entities that will be destroyed after every ai function was called
 
 local __group_iter = 1
-local __groups = {} -- list of groups' indexes
-local __groupsL = {} -- list of groups
+local __group_indexes = {} -- list of groups' indexes
+local __group_list = {} -- list of groups
 
 local function ensure_proto(type) -- if entity prototype isn't created, create one
   if not type.proto then
@@ -16,49 +15,35 @@ local function ensure_proto(type) -- if entity prototype isn't created, create o
 end
 
 local function get_groupLE(entity) -- get list of entities from group of this entity
-  return __entities[__groups[entity.type.group]]
+  return __entities[__group_indexes[entity.type.group]]
 end
 
 local function maintain_prototypes(type) -- maintains prototype inheritance
   
+  function type:create(x, y, ...)
+    return pplaf.entity.create(x, y, self.name, ...)
+  end
+  
   ensure_proto(type)
   setmetatable(type.proto, {__index = pplaf.entity.pewpew_proto}) -- assign pewpew prototype to entity prototype; will be overriden by other prototypes if possible and required
   
-  if not pplaf.entity.type_proto then -- if type prototype wasn't set, do nothing
-    return nil
-  end -- if type prototype was set, assign it to type
-  setmetatable(type, {__index = pplaf.entity.type_proto})
-  
-  if not pplaf.settings.override_entity_prototype then -- if required, assign type prototype's entity prototype to type's entity prototype
-    setmetatable(type.proto, {__index = pplaf.entity.type_proto.proto})
-  end
-  
 end
 
-local function modify_entity(entity, ...) -- entity modifications during it's init
+local function modify_entity(entity, x, y, ...) -- entity modifications during it's init
   setmetatable(entity, {__index = entity.type.proto}) -- assign prototype to entity
-  if entity.type.constructor then -- if possible, call constructor
-    entity.type.constructor(entity, ...)
-  end
   if entity.type.animation then -- if entity has animation, add specific variables to process it automatically
     pplaf.animation.modify_entity(entity)
   end
-  if entity.override_animation_variation then -- if override_animation_variation isn't nil, variation_index and corresponding offset will be overriden
-    entity.animation.variation_index = entity.override_animation_variation
-    entity.animation.variation_offset = entity.override_animation_variation * animation.type.frame_amount
+  if entity.type.constructor then -- if possible, call constructor
+    entity.type.constructor(entity, x, y, ...)
   end
   function entity:destroyA(...) -- destroyA maintains entity removal and calls destructor if possible
     if self.type.destructor then
       self.type.destructor(self, ...)
     end
-    table.insert(__to_destroy[__groups[self.type.group]], self.__indexP)
+    table.insert(__to_destroy[__group_indexes[self.type.group]], self.__indexP)
   end
   entity.__indexP = #get_groupLE(entity) + 1 -- __indexP is used to identify current position in list of entities
-end
-
-local function store_entity(entity) -- store entity in hash table and in list in respective groups
-  entities[entity.type.group][entity.id] = entity
-  table.insert(get_groupLE(entity), entity)
 end
 
 local function maintain_ai() -- call ai function if possible
@@ -78,28 +63,37 @@ local function maintain_ai() -- call ai function if possible
   end
 end
 
+local function update_size(arr, size)
+  for i = size, 1, -1 do
+    if arr[i] then
+      return i
+    end
+  end
+  return 0
+end
+
 local function maintain_destruction() -- maintain entity destruction if required
   for group_index, td_group in ipairs(__to_destroy) do
     if #td_group == 0 then -- if there are no entities to destroy, skip
       goto el_md1
     end
-    if #td_group == #__entities[group_index] then -- if whole array has to be destroyed, destroy it
-      for td_index, entity_index in ipairs(td_group) do
-        entities[__groupsL[group_index]][__entities[group_index][entity_index].id] = nil -- remove entity from hash table
-        __entities[group_index][entity_index] = nil -- remove entity from entities list
-      end
+    local group = __entities[group_index]
+    local index = 1
+    local size = #group
+    for _, entity_index in ipairs(td_group) do
+      group[entity_index] = nil -- remove entity from group
+    end
+    if #td_group == size then -- if whole group was destroyed, finish
       goto el_md0
-    end -- otherwise destroy required entities and replace them with newer entities
-    for td_index = #__to_destroy[group_index], 1, -1 do
-      local entity_index = td_group[td_index]
-      entities[__groupsL[group_index]][__entities[group_index][entity_index].id] = nil -- remove entity from hash table
-      if entity_index == #__entities[group_index] then -- if entity is last in the list, remove it
-        __entities[group_index][entity_index] = nil
-      else -- otherwise replace it with the last one
-        __entities[group_index][#__entities[group_index]].__indexP = __entities[group_index][entity_index].__indexP
-        __entities[group_index][entity_index] = __entities[group_index][#__entities[group_index]]
-        __entities[group_index][#__entities[group_index]] = nil
+    end -- otherwise fix list by moving last elements
+    size = update_size(group, size)
+    while index < size do -- increment index until all elements are iterated
+      if not group[index] then -- if nil, move last element here
+        group[index] = group[size]
+        group[index].__indexP = index
+        group[size] = nil
       end
+      index = index + 1
     end
     ::el_md0:: -- clear group and continue
     __to_destroy[group_index] = {}
@@ -114,30 +108,15 @@ pplaf.entity = {
   types = {}, -- stores loaded entity types
   
   add_group = function(group) -- adds group in entities array
-    entities[group] = {}
     table.insert(__entities, {})
     table.insert(__to_destroy, {})
-    table.insert(__groupsL, group)
-    __groups[group] = __group_iter
+    table.insert(__group_list, group)
+    __group_indexes[group] = __group_iter
     __group_iter = __group_iter + 1
   end,
   
-  get_entities = function() -- returns entities array
-    return entities
-  end,
-  
-  get_group = function(group) -- returns certain group array from entities array
-    return entities[group]
-  end,
-  
-  get_groupL = function(group) -- returns certain group array from entities array, possible to iterate through ipairs
-    return __entities[__groups[group]]
-  end,
-  
-  set_type_proto = function(path) -- this prototype will be assigned to every new loaded type
-    pplaf.entity.type_proto = require(path)
-    ensure_proto(pplaf.entity.type_proto)
-    setmetatable(pplaf.entity.type_proto.proto, {__index = pplaf.entity.pewpew_proto})
+  get_group = function(group) -- returns certain group from entities table; possible to iterate through ipairs
+    return __entities[__group_indexes[group]]
   end,
   
   -- differences in type loading methods are commented below
@@ -147,6 +126,7 @@ pplaf.entity = {
       local folder_path = path .. type_name .. '/'
       local file_path = folder_path .. 'entity.lua'
       local entity_type = require(file_path)
+      entity_type.name = type_name
       entity_type.folder_path = folder_path
       entity_type.file_path = file_path
       maintain_prototypes(entity_type)
@@ -158,21 +138,32 @@ pplaf.entity = {
     for _, type_name in ipairs{...} do
       local file_path = path .. type_name .. '.lua'
       local entity_type = require(file_path)
+      entity_type.name = type_name
       entity_type.file_path = file_path
       maintain_prototypes(entity_type)
       pplaf.entity.types[type_name] = entity_type
     end
   end,
   
+  def_types_in_pplaf = function() -- every declared type will be accessible as pplaf.entity.type_name
+    for type_name, type in pairs(pplaf.entity.types) do
+      pplaf.entity[type_name] = type
+    end
+  end,
+  
+  def_types_globally = function() -- every declared type will be accessible as type_name
+    for type_name, type in pairs(pplaf.entity.types) do
+      _ENV[type_name] = type
+    end
+  end,
+  
   create = function(x, y, type, ...) -- create entity in position, with type and pass any parameters to constructor(if it exists)
-    local id = pewpew.new_customizable_entity(x, y)
     local entity_type = pplaf.entity.types[type]
     local entity = {
-      id = id,
       type = entity_type,
     }
-    modify_entity(entity, ...) -- set prototype, call constructor, set destruction function; if required and possible*
-    store_entity(entity)
+    modify_entity(entity, x, y, ...) -- multiple modifications of entity; if required and possible*
+    table.insert(get_groupLE(entity), entity) -- store entity
     return entity
   end,
   
@@ -182,9 +173,6 @@ pplaf.entity = {
   end,
   
 }
-
-__DEF_PPLAF_ENTITY_MODIFY = modify_entity
-__DEF_PPLAF_ENTITY_STORE = store_entity
 
 --[[
   
@@ -210,8 +198,6 @@ __DEF_PPLAF_ENTITY_STORE = store_entity
       
       proto,              - entity prototype; better way, than declaring entity parameters/functions in constructor
       
-      built_in_stuff      - I'm not sure yet, but there is plenty of stuff I can add
-      
     }
     
     
@@ -223,7 +209,7 @@ __DEF_PPLAF_ENTITY_STORE = store_entity
       
       variable_n,         - whatever you want: hp, damage, counters, etc.; I usually define those in constructor
       
-      built_in_stuff      - I'm not sure yet, but there is plenty of stuff I can add
+      __indexP,           - current index in table; used to maintain destruction
       
     }
   

@@ -3,9 +3,6 @@
 
 local proto = {}
 
-function proto:add_arrow_to_player_ship(ship_id, color)
-	return pewpew.add_arrow_to_player_ship(ship_id, self.id, color)
-end
 function proto:get_position()
 	return pewpew.entity_get_position(self.id)
 end

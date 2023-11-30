@@ -19,8 +19,8 @@ return {
     
   },
   
-  constructor = function(entity, ...)
-    
+  constructor = function(entity, x, y, ...)
+    entity.id = pewpew.new_player_ship(x, y, 0)
   end,
   
   destructor = function(entity, ...)
