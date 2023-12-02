@@ -238,7 +238,7 @@ pplaf.camera = {
     ease_distance      = 200fx     , -- while camera is in this distance from target position, ease function will be applied
     
     velocity           = 20fx      , -- maximum velocity
-    free_mode          = false     , -- if true, you control camera without limitations, using movement joystick
+    free_mode          = nil       , -- if true, you control camera without limitations, using movement joystick
     
   },
   

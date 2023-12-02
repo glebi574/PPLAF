@@ -83,10 +83,16 @@ pplaf.animation = {
     for animation_type_name, animation_type in pairs(pplaf.animation.types) do
       table.insert(animation_type_list, animation_type)
     end
-    local type_state = 1
+    local type_state = 0
     local sub_state = 1
     local lifetime = 1
     pewpew.entity_set_update_callback(id, function(id)
+      if sub_state == 1 then
+        type_state = type_state + 1
+      end
+      if type_state > #animation_type_list then
+        lifetime = 0
+      end
       if lifetime == 0 then
         pewpew.entity_destroy(id)
         return nil
@@ -112,12 +118,6 @@ pplaf.animation = {
         if sub_state > animation_type.variation_amount * animation_type.frame_amount then
           sub_state = 1
         end
-      end
-      if sub_state == 1 then
-        type_state = type_state + 1
-      end
-      if type_state > #animation_type_list then
-        lifetime = 0
       end
     end)
   end,
