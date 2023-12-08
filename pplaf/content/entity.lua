@@ -93,6 +93,7 @@ local function maintain_destruction() -- maintain entity destruction if required
         group[index].__indexP = index
         group[size] = nil
       end
+      size = update_size(group, size)
       index = index + 1
     end
     ::el_md0:: -- clear group and continue
