@@ -58,11 +58,9 @@ pplaf.animation = {
   load_by_typed_dir = function(path, ...) -- load animations from folder; animations are stored in folders with type declared as animation.lua
     for _, type_name in ipairs{...} do
       local folder_path = path .. type_name .. '/'
-      local file_path = folder_path .. 'animation.lua'
       current_folder_path = folder_path
-      local animation_type = require(file_path)
+      local animation_type = require(folder_path .. 'animation.lua')
       animation_type.folder_path = folder_path
-      animation_type.file_path = file_path
       modify_animation_type(animation_type)
       pplaf.animation.types[type_name] = animation_type
     end
@@ -70,10 +68,9 @@ pplaf.animation = {
   
   load_by_typed_files = function(path, ...) -- load animations from folder; animation types are stored in one folder with respective names
     for _, type_name in ipairs{...} do
-      local file_path = path .. type_name .. '.lua'
       current_folder_path = path
-      local animation_type = require(file_path)
-      animation_type.file_path = file_path
+      local animation_type = require(path .. type_name .. '.lua')
+      animation_type.folder_path = path
       modify_animation_type(animation_type)
       pplaf.animation.types[type_name] = animation_type
     end

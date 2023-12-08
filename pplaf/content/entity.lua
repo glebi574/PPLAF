@@ -124,12 +124,10 @@ pplaf.entity = {
   load_by_typed_dir = function(path, ...) -- load entities from folder; entities are stored in folders with type declared as entity.lua
     for _, type_name in ipairs{...} do
       local folder_path = path .. type_name .. '/'
-      local file_path = folder_path .. 'entity.lua'
       current_folder_path = folder_path
-      local entity_type = require(file_path)
+      local entity_type = require(folder_path .. 'entity.lua')
       entity_type.name = type_name
       entity_type.folder_path = folder_path
-      entity_type.file_path = file_path
       maintain_prototypes(entity_type)
       pplaf.entity.types[type_name] = entity_type
     end
@@ -137,11 +135,10 @@ pplaf.entity = {
   
   load_by_typed_files = function(path, ...) -- load entities from folder; entity types are stored in one folder with respective names
     for _, type_name in ipairs{...} do
-      local file_path = path .. type_name .. '.lua'
       current_folder_path = path
-      local entity_type = require(file_path)
+      local entity_type = require(path .. type_name .. '.lua')
       entity_type.name = type_name
-      entity_type.file_path = file_path
+      entity_type.folder_path = path
       maintain_prototypes(entity_type)
       pplaf.entity.types[type_name] = entity_type
     end
