@@ -116,6 +116,12 @@ pplaf.entity = {
     __group_iter = __group_iter + 1
   end,
   
+  add_groups = function(...) -- adds groups using add_group()
+    for _, group in ipairs{...} do
+      pplaf.entity.add_group(group)
+    end
+  end,
+  
   get_group = function(group) -- returns certain group from entities table; possible to iterate through ipairs
     return __entities[__group_indexes[group]]
   end,
