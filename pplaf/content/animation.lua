@@ -226,6 +226,7 @@ pplaf.animation = {
       modify_frame = current_action_param.loop_increment_param
     elseif action_type == action_list.set_frame then
       animation.frame = current_action_param[2]
+      go_to_next_action(animation, animation_type)
     end
     
     if     template == 0 then -- animation is stored in 1 file; file contains A variation stored in order; every variation contains B frames
