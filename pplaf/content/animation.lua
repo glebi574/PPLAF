@@ -77,15 +77,19 @@ pplaf.animation = {
   end,
   
   preload_all = function() -- preloads all meshes to avoid lag/delay on 1st mesh load
-    local id = pewpew.new_customizable_entity(-100000fx, -100000fx) -- create temporary entity
+    local id = pewpew.new_customizable_entity(-10000fx, -10000fx) -- create temporary entity
     local animation_type_list = {} -- create list to iterate
     for animation_type_name, animation_type in pairs(pplaf.animation.types) do
       table.insert(animation_type_list, animation_type)
     end
     local type_state = 0
     local sub_state = 1
-    local lifetime = 1
+    local lifetime = 6
     pewpew.entity_set_update_callback(id, function(id)
+      if lifetime > 1 then
+        lifetime = lifetime - 1
+        return nil
+      end
       if sub_state == 1 then
         type_state = type_state + 1
       end
