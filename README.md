@@ -1,3 +1,4 @@
+### Use on your own risk. PewPew Live limits amount of available memory and because of how `PPLAF` works it's pretty easy to reach memory limit with fairly low amount of complex entities. Your levels won't work properly in most cases.  
 # PewPew Live Additional Framework
 `PewPew Live Additional Framework` is a set of modules, created to simplify `PewPew Live` level creation. To learn more about `PPLAF` features, check [wiki](https://github.com/glebi574/PPLAF/wiki).  
 ## Why to use `PPLAF`?
